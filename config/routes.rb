@@ -1,4 +1,8 @@
 Rails.application.routes.draw do
+  get 'rooms/new', as: :new_room
+
+  post '/rooms', to: 'rooms#create'
+
   # The priority is based upon order of creation: first created -> highest priority.
   # See how all your routes lay out with "rake routes".
 

@@ -1,0 +1,21 @@
+<h1>Rooms#new</h1>
+<p>Find me in app/views/rooms/new.html.erb</p>
+
+<div>
+  <%= form_tag('/rooms') do %>
+    <%= label_tag :name %>
+    <%= text_field_tag :name %>
+
+    <%= label_tag :channel %>
+    <%= text_field_tag :channel %>
+
+    <%= label_tag :nick %>
+    <%= text_field_tag :nick %>
+
+    <%= submit_tag "Create room" %>
+  <% end %>
+
+</div>
+
+
+  
