@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="utf-8"/>
+	<title>pls</title>
+	<meta name="description" content="" />
+	
+	<script src="js/swfobject.js"></script>
+	<script>
+	
+	
+		var flashvars = {
+		};
+		var params = {
+			menu: "false",
+			scale: "noScale",
+			allowFullscreen: "true",
+			allowScriptAccess: "always",
+			bgcolor: "",
+			wmode: "direct" // can cause issues with FP settings & webcam
+		};
+		var attributes = {
+			id:"pls"
+		};
+		swfobject.embedSWF(
+			"pls.swf", 
+			"flashDiv", "0", "0", "10.0.0", 
+			"expressInstall.swf", 
+			flashvars, params);
+			
+		function flash() {
+			return document.getElementById("flashDiv");
+		}
+		
+		function connect() {
+			flash().connect();
+		}
+		
+		function join() {
+			var channel = document.getElementById("channel").value
+			flash().join(channel)
+		}
+		
+		function send_msg() {
+			var msg = document.getElementById("msg").value
+			
+			flash().send_msg(msg)
+		}
+		
+	</script>
+	<style>
+		html, body { height:100%; overflow:hidden; }
+		body { margin:0; }
+	</style>
+</head>
+<body>
+	
+	<div id="flashDiv"></div>
+	<button onclick="connect()">connect to irc</button>
+	<p><input type="text" id="msg" name="message"/><button onclick="send_msg()">send</button></p>
+	<input type="text" id="channel" name="channel"/><button onclick="join()">join</button>
+	
+	
+</body>
+</html>
