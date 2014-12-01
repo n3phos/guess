@@ -11,19 +11,8 @@ package
 	
 	public class Main extends Sprite 
 	{
-		public var keyHit:Sprite;
-		
 		
 		private var socket:Socket;
-		
-		private var hostPath:String = "irc.freenode.net";
-		private var hostPort:int = 6667;
-		
-		private var nickname:String = "nephos_user";
-		private var username:String = "Test User";
-		private var hostname:String = "TEST-HOST";
-		private var realname:String = "NO NAME";
-		
 		private var connectionState:String = "INIT";
 
 		
@@ -36,126 +25,63 @@ package
 		
 		private function init(e:Event = null):void 
 		{
-			trace("in init");
+			
+			trace("initializing...");
 			removeEventListener(Event.ADDED_TO_STAGE, init);
 			// entry point
-			ExternalInterface.addCallback("connect", initSocket);
-			ExternalInterface.addCallback("join", joinChannel);
-			ExternalInterface.addCallback("send_msg", sendMessage);
-
+			ExternalInterface.addCallback("connect", connect);
+			ExternalInterface.addCallback("close_connection", close);
+			ExternalInterface.addCallback("send_data", send_data);
+			
+			
+			//ExternalInterface.call("flash_ready");
 		}
 		
 		
-		public function initSocket():void
+		public function connect(host:String, port:int):void
 		{
-			ExternalInterface.call("alert", "connect called");
-			socket = new Socket(hostPath, hostPort);
+			trace("connecting to: " + host + ":" + port);
+			socket = new Socket(host, port);
 			socket.addEventListener(Event.CONNECT, connectHandler);
 			socket.addEventListener(Event.CLOSE, closeHandler);
 			socket.addEventListener(ProgressEvent.SOCKET_DATA, socketDataHandler);
+		}
+		
+		public function send_data(data:String):void
+		{
+			trace("sending data: " + data);
+			socket.writeUTFBytes(data);
+			socket.flush();
+		}
+		
+		private function receive_data():void
+		{
 			
-			connectionState = "CONNECTING";
+			var data:String = socket.readUTFBytes(socket.bytesAvailable);
+			trace("received data: " + data);
+			ExternalInterface.call("receive_data", data);
 		}
 		
-		private function sendNick():void
+		public function close():void 
 		{
-			/*
-				Command: NICK
-   				Parameters: <nickname> [ <hopcount> ]
-				
-				Command: USER
-				Parameters: <username> <hostname> <servername> <realname>
-			*/
-			
-			// connectionState = "HANDSHAKE";
-
-			socket.writeUTFBytes("NICK " + nickname + "\r\n");
-			socket.writeUTFBytes("USER " + username + " " + hostname + " " + hostPath + ": " + realname + "\r\n");
-			socket.flush();
-		}
-		
-		private function quit():void
-		{
-			trace("quit");
-			
-			connectionState = "QUIT";
-			socket.writeUTFBytes("QUIT :i quit there 4...\r\n");
-			socket.flush();
-		}
-		
-		public function joinChannel(channel:String):void
-		{
-			trace("JOIN: " + channel);
-			socket.writeUTFBytes("JOIN " + channel + "\r\n");
-			socket.flush();
-		}
-		
-		public function sendMessage(msg:String):void
-		{
-			ExternalInterface.call("alert", "called sendMessage " + msg);
-			socket.writeUTFBytes("PRIVMSG #nephos :" + msg + "\r\n");
-			socket.flush();
-		}
-		
-		private function sendTime():void
-		{
-			var now:Date = new Date();
-			
-			trace("TIME: " + now.toString());
-			socket.writeUTFBytes("PRIVMSG #fort :teh time is now " + now.toString() + "\r\n");
-			socket.flush();
-		}
-		
-		private function pongServer(daemon:String):void
-		{
-			trace("PONG: *" + daemon + "*");
-			socket.writeUTFBytes("PONG " + daemon + "\r\n");
-			socket.flush();
-		}
-		
-		private function readData():void
-		{
-			var socketData:String = socket.readUTFBytes(socket.bytesAvailable);
-			trace(socketData);
-			
-			if (socketData.split(' ', 1)[0] == "PING")
-			{
-				// PING Command, send PONG
-				pongServer(socketData.split(':')[1]);
-			}
-			else
-			{
-				var msg:String = socketData.substr(socketData.lastIndexOf(":"));
-				trace("MSG: " + msg);
-				if (msg.toLowerCase().indexOf("time") >= 0)
-				{
-					sendTime();
-				}
-				else if (msg.toLowerCase().indexOf("test") >= 0)
-				{
-					sendMessage("test");
-				}
-			}
+			socket.close();
 		}
 		
 		private function socketDataHandler(e:ProgressEvent):void
 		{
-			trace("Data");
-			readData();
+			receive_data();
 		}
 		
 		private function connectHandler(e:Event):void
 		{
-			trace("Connect");
-			connectionState = "CONNECTED";
-			sendNick();
-			joinChannel("#nephos");
+			trace("connected");
+			ExternalInterface.call("connected");
 		}
 		
 		private function closeHandler(e:Event):void
 		{
-			trace("Close");
-			connectionState = "CLOSED";
+			ExternalInterface.call("connection_closed");
+			trace("connection closed");
 		}
 		
 		
