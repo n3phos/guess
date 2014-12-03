@@ -19,4 +19,26 @@ class RoomsController < ApplicationController
 
   end
 
+  def join
+    @room = Room.find(params[:name])
+
+    #if !@room
+      #render 'shared/errors'
+
+    #end
+    @room.join(current_user)
+  end
+
+  def leave
+
+    #destroy(@room)
+  end
+
+  def destroy()
+    @room = Room.find(params[:name])
+    if @room
+      @room.destroy
+    end
+  end
+
 end

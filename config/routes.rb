@@ -3,7 +3,7 @@ Rails.application.routes.draw do
 
   get 'home', to: 'users#new', as: :home
 
-  get 'lobby', to: 'rooms#lobby', as: :lobby
+  get '/rooms/:name', to: 'rooms#join'
 
   get 'rooms/new', as: :new_room
 
