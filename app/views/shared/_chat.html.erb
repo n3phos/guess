@@ -1,6 +1,24 @@
 
 <div id="chat-wrapper" class="row">
 
+  <% content_for :chat do %>
+    <%= javascript_include_tag "chat.js" %>
+    <%= swf_tag("chat.swf", :width => 0, :height => 0, :id => "my_flash", :div_id => "flashDiv", :parameters => { :allowScriptAccess => "always", :scale => "noScale"}) %>
+  <% end %>
+
+  <div id="flashDiv"></div>
+
+  <button onclick="connect()">connect to irc</button>
+  <p><input type="text" id="msg" name="message"/><button onclick="message()">send</button></p>
+  <input type="text" id="channel" name="channel"/><button onclick="join()">join</button>
+
+  <div id="table-wrapper" style="overflow:auto; height:500px; width:50%; ">
+  <table id="chatWrapper">
+
+  </table>
+</div>
+
+
 
 
   <div class="col-md-3 user-container" >
