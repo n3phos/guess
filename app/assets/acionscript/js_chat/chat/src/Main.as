@@ -7,7 +7,7 @@ package
 	import flash.external.ExternalInterface;
 	import flash.system.Security;
 	
-	Security.allowDomain("http://localhost:3000/assets");
+	Security.allowDomain("irc.freenode.org");
 	
 	public class Main extends Sprite 
 	{
