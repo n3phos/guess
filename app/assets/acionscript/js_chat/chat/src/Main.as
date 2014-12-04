@@ -7,7 +7,7 @@ package
 	import flash.external.ExternalInterface;
 	import flash.system.Security;
 	
-	Security.allowDomain("irc.freenode.org");
+	Security.loadPolicyFile("xmlsocket://irc.freenode.org:843");
 	
 	public class Main extends Sprite 
 	{
