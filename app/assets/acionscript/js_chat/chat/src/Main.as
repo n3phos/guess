@@ -7,7 +7,7 @@ package
 	import flash.external.ExternalInterface;
 	import flash.system.Security;
 	
-	Security.loadPolicyFile("http://localhost:3000/crossdomain.xml");
+	Security.allowDomain("*");
 	
 	public class Main extends Sprite 
 	{
@@ -27,6 +27,8 @@ package
 		{
 			var added:Boolean = false;
 			trace("initializing...");
+			trace(Security.sandboxType);
+			
 			removeEventListener(Event.ADDED_TO_STAGE, init);
 			// entry point
 			added = ExternalInterface.addCallback("connect", connect);
