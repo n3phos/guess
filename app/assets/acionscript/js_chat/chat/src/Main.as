@@ -7,7 +7,7 @@ package
 	import flash.external.ExternalInterface;
 	import flash.system.Security;
 	
-	Security.allowDomain("http://localhost", "*");
+	Security.allowDomain("http://localhost:3000/assets");
 	
 	public class Main extends Sprite 
 	{
