@@ -7,7 +7,7 @@ package
 	import flash.external.ExternalInterface;
 	import flash.system.Security;
 	
-	
+	Security.loadPolicyFile("http://localhost:3000/crossdomain.xml");
 	
 	public class Main extends Sprite 
 	{
