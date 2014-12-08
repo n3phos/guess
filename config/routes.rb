@@ -9,6 +9,8 @@ Rails.application.routes.draw do
 
   post '/rooms', to: 'rooms#create'
 
+  post '/rooms/:name/users', to: 'rooms#users', as: :room_users
+
   resources :users
 
   # The priority is based upon order of creation: first created -> highest priority.

@@ -3,39 +3,38 @@
 
   <% content_for :chat do %>
     <%= javascript_include_tag "chat.js" %>
-    <%= swf_tag("chat.swf", :width => 0, :height => 0, :id => "my_flash", :div_id => "flashDiv", :parameters => { :allowScriptAccess => "always", :scale => "noScale"}) %>
+    <%= swf_tag("chat.swf", :width => 0, :height => 0, :id => "my_flash", :div_id => "flashDiv", :parameters => { :allowScriptAccess => "always", :scale => "noScale"})%>
   <% end %>
 
   <div id="flashDiv"></div>
 
-  <button onclick="connect()">connect to irc</button>
-  <p><input type="text" id="msg" name="message"/><button onclick="message()">send</button></p>
-  <input type="text" id="channel" name="channel"/><button onclick="join()">join</button>
-
-  <div id="table-wrapper" style="overflow:auto; height:500px; width:50%; ">
-  <table id="chatWrapper">
-
-  </table>
-</div>
-
+  <h2><%= @room.name %></h2>
 
 
 
   <div class="col-md-3 user-container" >
 
-    <%= render 'shared/chat_users' %>
+    <%= render :partial => 'shared/chat_users', locals: { room: @room } %>
 
   </div>
 
-  <div class="col-md-9 message-display-box">
+  <div id="table-wrapper" class="col-md-9 message-display-box">
 
-    nephos: hello world
 
+    <table id="chatWrapper">
+
+    </table>
   </div>
 
   <div id="message-container">
 
   </div>
 
+  <button onclick="connect()">connect to irc</button>
+  <p><input type="text" id="msg" name="message"/><button onclick="message()">send</button></p>
+  <input type="text" id="channel" name="channel"/><button onclick="join()">join</button>
+  <%= button_to 'Update users', room_users_path(name: @room.name), remote: true %>
+
 </div>
 
+</div>

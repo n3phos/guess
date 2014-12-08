@@ -1,4 +1,8 @@
 
 <div id="users-wrapper">
-  here are the listed users
+  <ul>
+    <% room.users.values.each do |u| %>
+      <li><%= u %></li>
+    <% end %>
+  </ul>
 </div>

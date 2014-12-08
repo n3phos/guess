@@ -41,4 +41,13 @@ class RoomsController < ApplicationController
     end
   end
 
+  def users
+    @room = Room.find(params[:name])
+
+
+    respond_to do |format|
+      format.js
+    end
+  end
+
 end

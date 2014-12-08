@@ -1,11 +1,12 @@
 
+var current_room = "";
 			
 		function flash() {
-			return document.getElementById("flashDiv");
+			return document.getElementById("my_flash");
 		}
 		
 		function connect() {
-			var host = "irc.freenode.org";
+			var host = "128.199.35.15";
 			var port = 6667;
 			
 			var f = flash();
@@ -19,7 +20,7 @@
 		
 		function message() {
 			var msg = document.getElementById("msg").value
-			var target = "#nephos";
+			var target = current_room;
 			
 			irc_msg(target, msg);
 		}
@@ -32,7 +33,7 @@
 		
 		function nick()
 		{
-			irc_nick("nephos_user2");
+			irc_nick("tguser");
 		}
 		
 		function user()
@@ -56,6 +57,7 @@
 		function irc_join(channel)
 		{
 			var cmd = "JOIN " + channel;
+      current_room = channel;
 			send_cmd(cmd);
 		}
 		
@@ -89,18 +91,19 @@
 			var chat_wrapper = document.getElementById("chatWrapper");
 			
 			
-			var lines = parse(data);
+			var lines = data.split("\r\n");
+      var msg = parse_lines(lines);
 			
 			
 			
-			for( var i = 0; i < lines.length; i++)
+			for( var i = 0; i < msg.length; i++)
 			{
 				
 				
 				//var c_from = row.insertCell();
 				//var c_msg = row.insertCell();
 				var row = chat_wrapper.insertRow();
-				row.insertCell().innerHTML = lines[i];
+				row.insertCell().innerHTML = msg[i].from + ": " + msg[i].text;
 				
 				//c_from.innerHTML = from;
 				//c_msg.innerHTML = msg;
@@ -110,20 +113,41 @@
 			
 		}
 		
-		function parse(data)
-		{
-			
-			return data.split("\r\n");
-			/*
-			var parsed_message = [];
-			var msg = data.split(" ");
-			
-			parsed_message[0] = msg[0];
-			parsed_message[1] = msg[1];
-			
-			return parsed_message;
-			*/
-		}
+  function parse_lines(lines)
+  {
+    var msg = {};
+    var msgs = [];
+    var from = "";
+    var text = "";
+
+    for( var i = 0; i < lines.length; i++)
+    {
+      var l = lines[i].split(' ');
+      from = l[0].replace(":", "");
+      from = from.replace(/!~.+/, "");
+
+      for(var p = 1; p < l.length; p++)
+      {
+        var part = l[p];
+        var res = part.match(/:/);
+        if(res)
+        {
+          text = l[p].replace(":","");
+          for(var n = p + 1; n < l.length; n++)
+          {
+            text = text + " " + l[n];
+          }
+          break;
+        }
+      }
+
+      msgs.push({ "text": text, "from":from});
+
+  }
+
+  return msgs;
+
+  }
 		
 		function connection_closed()
 		{

@@ -16,7 +16,7 @@ module RubyChat
       #self.id = config['id']
       self.word_list = []
 
-      config.merge!({ 'host' => "irc.freenode.org", 'port' => 6667 })
+      config.merge!({ 'host' => "128.199.35.15", 'port' => 6667 })
 
 
       init_client(config)

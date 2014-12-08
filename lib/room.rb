@@ -21,7 +21,7 @@ class Room
     room_id = alloc_room_id
 
     self.name = name || room_id
-    self.channel = "#tguess-#{room_id}"
+    self.channel = "#tg-#{room_id}"
     self.room_operator = "RoomOp-#{@@room_ids}"
 
     config = { 'channel' => channel , 'nick' => room_operator}
