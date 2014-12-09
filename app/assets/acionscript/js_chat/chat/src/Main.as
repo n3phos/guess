@@ -7,7 +7,7 @@ package
 	import flash.external.ExternalInterface;
 	import flash.system.Security;
 	
-	Security.allowDomain("*");
+	
 	
 	public class Main extends Sprite 
 	{
@@ -28,6 +28,7 @@ package
 			var added:Boolean = false;
 			trace("initializing...");
 			trace(Security.sandboxType);
+			
 			
 			removeEventListener(Event.ADDED_TO_STAGE, init);
 			// entry point
@@ -68,7 +69,7 @@ package
 			
 			var data:String = socket.readUTFBytes(socket.bytesAvailable);
 			trace("received data: " + data);
-			ExternalInterface.call("receive_data", data);
+			ExternalInterface.call("chat.receive_data()");
 		}
 		
 		public function close():void 
