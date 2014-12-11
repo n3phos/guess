@@ -1,3 +1,4 @@
+require 'json'
 
 class Room
 
@@ -57,6 +58,20 @@ class Room
     end
 
     left
+
+  end
+
+  def to_json(current_user)
+
+    h = { "name" => name,
+          "channel" => channel,
+          "room_operator" => room_operator,
+          "users" => users,
+          "current_user" => { "name" => current_user.nick, "irc_nick" => current_user.irc_nick }
+        }
+
+    h.to_json
+
 
   end
 

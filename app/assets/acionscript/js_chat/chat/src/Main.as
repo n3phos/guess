@@ -13,7 +13,6 @@ package
 	{
 		
 		private var socket:Socket;
-		private var connectionState:String = "INIT";
 
 		
 		public function Main():void 
@@ -25,26 +24,15 @@ package
 		
 		private function init(e:Event = null):void 
 		{
-			var added:Boolean = false;
 			trace("initializing...");
-			trace(Security.sandboxType);
-			
-			
+
 			removeEventListener(Event.ADDED_TO_STAGE, init);
 			// entry point
-			added = ExternalInterface.addCallback("connect", connect);
-			trace(added);
-			
-			added = ExternalInterface.addCallback("close_connection", close);
-			trace(added);
-			
-			added = ExternalInterface.addCallback("send_data", send_data);
-			
-			trace(added);
-			
+			ExternalInterface.addCallback("connect", connect);
+			ExternalInterface.addCallback("close_connection", close);
+			ExternalInterface.addCallback("send_data", send_data);
+
 			trace("finished initializing");
-			
-			//ExternalInterface.call("flash_ready");
 		}
 		
 		
@@ -69,7 +57,7 @@ package
 			
 			var data:String = socket.readUTFBytes(socket.bytesAvailable);
 			trace("received data: " + data);
-			ExternalInterface.call("chat.receive_data()");
+			ExternalInterface.call("chat.receive_data", data);
 		}
 		
 		public function close():void 
@@ -85,12 +73,12 @@ package
 		private function connectHandler(e:Event):void
 		{
 			trace("connected");
-			ExternalInterface.call("connected");
+			ExternalInterface.call("chat.connected");
 		}
 		
 		private function closeHandler(e:Event):void
 		{
-			ExternalInterface.call("connection_closed");
+			ExternalInterface.call("chat.connection_closed");
 			trace("connection closed");
 		}
 		

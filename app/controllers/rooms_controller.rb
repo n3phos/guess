@@ -50,4 +50,11 @@ class RoomsController < ApplicationController
     end
   end
 
+  def info
+    @room = Room.find(params[:name])
+    respond_to do |format|
+      format.json { render json: @room.to_json(current_user) }
+    end
+  end
+
 end

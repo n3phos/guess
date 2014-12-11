@@ -3,7 +3,7 @@
 
   <% content_for :chat do %>
     <%= javascript_include_tag "chat.js" %>
-    <%= swf_tag("chat.swf", :width => 0, :height => 0, :id => "my_flash", :div_id => "flashDiv", :parameters => { :allowScriptAccess => "always", :scale => "noScale"})%>
+    <%= swf_tag("chat.swf", :width => 0, :height => 0, :id => "my_flash", :div_id => "flashDiv", :parameters => { :allowScriptAccess => "always", :scale => "noScale"}, :javascript_class => "WebChat") %>
   <% end %>
 
   <div id="flashDiv"></div>
@@ -30,9 +30,7 @@
 
   </div>
 
-  <button onclick="connect()">connect to irc</button>
-  <p><input type="text" id="msg" name="message"/><button onclick="message()">send</button></p>
-  <input type="text" id="channel" name="channel"/><button onclick="join()">join</button>
+  <textarea id="usermsg" rows="4" cols="30" style="width: 300px;" type="text"> </textarea>
   <%= button_to 'Update users', room_users_path(name: @room.name), remote: true %>
 
 </div>

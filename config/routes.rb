@@ -11,6 +11,8 @@ Rails.application.routes.draw do
 
   post '/rooms/:name/users', to: 'rooms#users', as: :room_users
 
+  get '/rooms/:name/info', to: 'rooms#info', as: :room_info
+
   resources :users
 
   # The priority is based upon order of creation: first created -> highest priority.
