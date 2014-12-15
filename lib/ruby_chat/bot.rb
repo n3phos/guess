@@ -54,7 +54,7 @@ module RubyChat
 
         on(:message) do |source, target, message|
 
-          message(channel, "hello #{source}, loktar ogar")
+          #message(channel, "hello #{source}, loktar ogar")
 
         end
 

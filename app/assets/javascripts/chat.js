@@ -12,17 +12,42 @@ var WebChat = function() {
 
 /* global chat instance */
 
-var chat = null;
-
+var chat = new WebChat();
+var from = "";
 
 /*$(document).ready(function() {
   chat.initialize();
 });
 */
+var timestamp = null;
 
-WebChat.prototype.initialize = function() {
-  chat = new WebChat();
-  chat.init();
+var load_callback = function (e) {
+
+
+  if(!e.success || !e.ref) { return false; }
+
+  swfLoadEvent(function() {
+
+    chat.init();
+
+  },e);
+
+
+};
+
+function swfLoadEvent(fn, e) {
+  if(typeof fn !== "function") { return false; }
+
+  var initialTimeout = setTimeout(function () {
+    if(typeof e.ref.PercentLoaded !== "undefined" && e.ref.PercentLoaded()) {
+      var loadCheckInterval = setInterval(function () {
+        if(e.ref.PercentLoaded() === 100) {
+          fn();
+          clearInterval(loadCheckInterval);
+        }
+      }, 1500);
+    }
+  }, 200);
 }
 
 WebChat.prototype.receive_data = function(data) {
@@ -34,7 +59,11 @@ WebChat.prototype.receive_data = function(data) {
 WebChat.prototype.on_welcome = function() {
   this.join();
 
-  welcome_user("Welcome to the chat");
+  seconds = $.now();
+  seconds = timestamp - seconds;
+  seconds = seconds / 1000;
+
+  welcome_user("Welcome to the chat, it took " + seconds + " seconds to init chat");
 }
 
 
@@ -57,6 +86,8 @@ WebChat.prototype.join = function() {
 
 WebChat.prototype.init = function()
 {
+
+  timestamp = $.now();
 
   $.ajax({
     url: $(location).attr('href') + "/info",
@@ -86,7 +117,11 @@ WebChat.prototype.set_users = function (users)
 }
 
 WebChat.prototype.init_flash = function() {
-  this.connection = flash();
+  var f = flash();
+  if( f == "undefined") {
+    alert("undefined");
+  }
+  this.connection = f;
 }
 
 WebChat.prototype.users = function()
@@ -124,8 +159,14 @@ WebChat.prototype.set_user = function(user) {
   this._user = user;
 }
 
-WebChat.prototype.user = function() {
-  return this._user;
+WebChat.prototype.user = function(irc_nick) {
+  irc_nick = irc_nick || "";
+  if(irc_nick == "") {
+    return this._user;
+  }
+  var user = this._users[irc_nick];
+  if(!user) { return irc_nick };
+  return user;
 }
 
 WebChat.prototype.connect = function() {
@@ -151,7 +192,18 @@ $(function() {
   });
 });
 
+window.onbeforeunload = function () {
 
+  var curl = $(location).attr('href');
+
+  $.ajax({
+    url: curl + "/leave",
+    type: "GET",
+    async: false,
+    dataType: "json"
+  });
+
+}
 
 		function flash() {
 			return document.getElementById("my_flash");
@@ -230,12 +282,13 @@ $(function() {
           chat_messages.push(msgs[i]);
           break;
         case "JOIN":
-          update_users(msgs[i]);
+          on_user_join(msgs[i]);
           break;
         case "PING":
           pong(msgs[i]);
-        case "LEAVE":
-          update_users(msgs[i]);
+          break;
+        case "QUIT":
+          on_user_left(msgs[i]);
           break;
         case "001":
           chat.on_welcome(msgs[i]);
@@ -248,23 +301,87 @@ $(function() {
 
     if(chat_messages.length > 0)
     {
-      update_chat(chat_messages);
+      chat_handle_message(chat_messages);
     }
   }
 
-  function update_users(msg)
+  function update_users()
   {
+
+      var curl = $(location).attr('href');
+
+      $.ajax({
+        url: curl + "/info",
+        async: false,
+        type: "GET",
+        dataType: 'json',
+        success: function(data) {
+
+          chat.set_users(data["users"]);
+
+        }
+      });
   }
+
+  function on_user_join(msg)
+  {
+
+    if(chat.user().irc_nick !== msg.from) {
+
+
+      update_users();
+
+      event_message = chat.user(msg.from) + " joined the room";
+
+      render_new_users();
+    }
+  }
+
+  function on_user_left(msg)
+  {
+
+    event_message = chat.user(msg.from) + " has left the room";
+
+    update_users();
+
+    render_new_users();
+
+  }
+
+  function render_new_users()
+  {
+    var curl = $(location).attr('href');
+
+    $.ajax({
+      url: curl + "/users",
+      type: "GET",
+      success: function() {
+
+        chat.append(event_message);
+        event_message = "";
+      }
+    });
+  }
+
+
+
+
 
   function welcome_user(welcome_message)
   {
+    chat.append(welcome_message);
+  }
+
+  WebChat.prototype.append = function(msg) {
+
     var table_wrapper = document.getElementById("table-wrapper");
     var chat_wrapper = document.getElementById("chatWrapper");
 
     var row = chat_wrapper.insertRow();
-    row.insertCell().innerHTML = welcome_message;
+    row.insertCell().innerHTML = msg;
 
     table_wrapper.scrollTop = table_wrapper.scrollHeight;
+
   }
 
 
@@ -293,6 +410,16 @@ $(function() {
       table_wrapper.scrollTop = table_wrapper.scrollHeight;
     }
 
+  }
+
+  function chat_handle_message(msgs) {
+    for( var i = 0; i < msgs.length; i++)
+    {
+      var msg = msgs[i];
+      msg.from = chat.user(msg.from);
+    }
+
+    update_chat(msgs);
   }
 
   function parse_lines(lines)

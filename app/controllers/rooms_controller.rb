@@ -31,6 +31,14 @@ class RoomsController < ApplicationController
 
   def leave
 
+    @room = Room.find(params[:name])
+
+    @room.leave(current_user)
+
+    respond_to do |format|
+      format.json { render :json => "left:true" }
+    end
+
     #destroy(@room)
   end
 

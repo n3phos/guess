@@ -1,7 +1,7 @@
 Rails.application.routes.draw do
 
 
-  get 'home', to: 'users#new', as: :home
+  get '/home', to: 'users#new', as: :home
 
   get '/rooms/:name', to: 'rooms#join'
 
@@ -9,9 +9,11 @@ Rails.application.routes.draw do
 
   post '/rooms', to: 'rooms#create'
 
-  post '/rooms/:name/users', to: 'rooms#users', as: :room_users
+  get '/rooms/:name/users', to: 'rooms#users', as: :room_users
 
   get '/rooms/:name/info', to: 'rooms#info', as: :room_info
+
+  get '/rooms/:name/leave', to: 'rooms#leave', as: :room_leave
 
   resources :users
 
