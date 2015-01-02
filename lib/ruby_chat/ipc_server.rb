@@ -69,6 +69,9 @@ module RubyChat
             self.send(action, packet)
           end
 
+        rescue Exception => e
+          puts e.message
+          puts e.backtrace.inspect
         end
 
       end

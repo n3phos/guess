@@ -10,6 +10,10 @@
     <%= yield :chat %>
   <% end %>
 
+  <% if content_for? :game %>
+    <%= yield :game %>
+  <% end %>
+
 </head>
 <body>
 

@@ -15,6 +15,12 @@ Rails.application.routes.draw do
 
   get '/rooms/:name/leave', to: 'rooms#leave', as: :room_leave
 
+  get '/rooms/:name/games/:id', to: 'games#show', as: :show_room_game
+
+  post '/rooms/:name/games', to: 'games#create', as: :create_room_game
+
+  patch '/rooms/:name/games/:id/', to: 'games#update', as: :update_room_game
+
   resources :users
 
   # The priority is based upon order of creation: first created -> highest priority.

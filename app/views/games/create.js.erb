@@ -1,0 +1,3 @@
+
+$('#game-wrapper').html("<%= escape_javascript render :partial => 'shared/game' %>");
+$('#game-wrapper').trigger("initialize", [<%= @game.id %>]);

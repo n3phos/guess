@@ -64,6 +64,10 @@ WebChat.prototype.on_welcome = function() {
   seconds = seconds / 1000;
 
   welcome_user("Welcome to the chat, it took " + seconds + " seconds to init chat");
+
+  var game = $('#start-game');
+  game.submit();
+
 }
 
 
@@ -216,9 +220,8 @@ window.onbeforeunload = function () {
 		}
 		
     function message(msg) {
-      var target = chat.room();
 
-      irc_msg(target, msg);
+      chat.irc_msg(msg);
       update_chat([{ "from": chat.user().name, "text": msg}]);
     }
 		
@@ -245,6 +248,12 @@ window.onbeforeunload = function () {
 			var cmd = "USER " + username + " " + mode + " * " + ":" + realname;
 			send_cmd(cmd);
 		}
+
+    function irc_names()
+    {
+      var cmd = "NAMES #tg-room#1";
+      send_cmd(cmd);
+    }
 			
 		
 		function irc_join(channel)
@@ -254,8 +263,9 @@ window.onbeforeunload = function () {
 			send_cmd(cmd);
 		}
 		
-		function irc_msg(target, msg)
+WebChat.prototype.irc_msg = function(msg, target)
 		{
+      target = target || chat.room();
 			var cmd = "PRIVMSG " + target + " :" + msg;
 			send_cmd(cmd);
 		}
@@ -265,10 +275,10 @@ window.onbeforeunload = function () {
 			cmd = cmd + "\r\n";
 			chat.send_data(cmd);
 		}
-		
-		
-		
-		
+    WebChat.prototype.send_raw = function (msg) {
+
+      send_cmd(msg);
+    }
 
 
   function handle_message(msgs)
@@ -279,6 +289,12 @@ window.onbeforeunload = function () {
 
       switch(msgs[i].command) {
         case "PRIVMSG":
+          if(msgs[i].text.match(/^!/)) {
+            if(msgs[i].from == chat.room_op()) {
+              game.handle_event(msgs[i].text);
+            }
+            break;
+          }
           chat_messages.push(msgs[i]);
           break;
         case "JOIN":

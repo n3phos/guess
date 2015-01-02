@@ -32,7 +32,7 @@ require 'logger'
       dsl_accessor :logger
 
       # Set of channels that this client is connected to
-      attr_reader :channels
+      attr_accessor :channels
 
       # Hash of callbacks on events. key is symbol event name.
       # value is array of procs to call
@@ -61,7 +61,7 @@ require 'logger'
         @port      = options[:port]
         @ssl       = options[:ssl]
         @realname  = options[:realname]
-        @channels  = Set.new
+        @channels  = []
         @callbacks = Hash.new
         @connected = false
 
@@ -92,7 +92,9 @@ require 'logger'
       # Start running the client
       def run
 
+
         connect
+
 
         ready
 

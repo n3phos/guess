@@ -39,6 +39,16 @@
             self.server_reply '433', 'ERR_NICKNAMEINUSE' do |m|
               @nick = nil
             end
+
+            self.server_reply '353' do |m|
+              trigger(:names, m[:params][3])
+            end
+
+            self.server_reply 'QUIT' do |m|
+              trigger(:quit, sender_nick(m[:prefix]))
+            end
+
+
         end
 
 

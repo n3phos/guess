@@ -63,13 +63,16 @@
       #   client.join(['#general', 'fubar'], "#foo")  # join multiple channels
       def join(*args)
         raise ArgumentError.new("Not enough arguments") unless args.size > 0
+        puts "in join command: #{self.channels.inspect}"
         channels, keys = [], []
         args.map!  {|arg| arg.is_a?(Array) ? arg : [arg, '']}
         args.sort! {|a,b| b[1].length <=> a[1].length}  # key channels first
         args.each  {|arg|
           channels << arg[0]
+          self.channels << arg[0]
           keys     << arg[1] if arg[1].length > 0
         }
+        puts "channels: #{self.channels.inspect}"
         send_data("JOIN #{channels.join(',')} #{keys.join(',')}".strip)
       end
 
@@ -114,8 +117,11 @@
       #   which server generates response
       # @see http://tools.ietf.org/html/rfc2812#section-3.2.5 3.2.5 Names message
       def names(*args)
-        options = args.extract_options!
-        send_data("NAMES #{args.join(',')} #{options[:target]}".strip)
+        puts "inside names"
+        args = self.channels if args.empty?
+        cmd = "NAMES #{args.join(',')}"
+        puts "names cmd: #{cmd}"
+        send_data(cmd )
       end
 
       # List channels and topics
@@ -155,6 +161,7 @@
       # @param message [String]
       # @see http://tools.ietf.org/html/rfc2812#section-3.3.1 3.3.1 Private message
       def privmsg(target, message)
+        puts "sending privmsg"
         send_data("PRIVMSG #{target} :#{message}")
       end
       alias_method :message, :privmsg

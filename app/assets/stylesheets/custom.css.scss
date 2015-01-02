@@ -13,7 +13,7 @@ html {
 }
 
 body {
-  padding-top: 60px;
+  padding-top: 5px;
 }
 
 section {
@@ -71,6 +71,11 @@ footer {
   height: 200px;
   overflow: auto;
 
+}
+
+.game-box {
+  height: 200px;
+  @include chat-border;
 }
 
 .debug_dump {
