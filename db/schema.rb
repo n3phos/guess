@@ -11,10 +11,19 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20150102182941) do
+ActiveRecord::Schema.define(version: 20150105215344) do
 
   create_table "games", force: true do |t|
     t.integer  "history_id"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
+  create_table "themes", force: true do |t|
+    t.string   "video_id"
+    t.integer  "start_seconds"
+    t.integer  "end_seconds"
+    t.string   "image_path"
     t.datetime "created_at"
     t.datetime "updated_at"
   end

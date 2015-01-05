@@ -17,6 +17,7 @@ module RubyChat
     def initialize(config)
 
       self.channel_users = {}
+
       self.game = Game.new(self)
 
       puts "bot initialize"
@@ -92,17 +93,45 @@ module RubyChat
 
     def handle_message(source, target, message)
 
-      if message.match(/^!/)
-        e = parse_event(message)
+      begin
+        e = parse_event(source, message)
         puts "dispatching event: #{e.inspect}"
-        game.dispatch_event(e, source)
+        game.dispatch_event(e)
+      rescue Exception => e
+        puts e.message
+        puts e.backtrace.inspect
+      else
+        # other exception
+      ensure
+        # always executed
       end
+
 
 
     end
 
-    def parse_event(msg)
-      return msg.gsub(/^!/, "")
+    def parse_event(s, m)
+      puts "in parse event"
+      event = {
+        'trigger' => "",
+        'source' => "",
+        'data' => ""
+      }
+
+      if m.match(/^!/)
+         event['trigger'] = m.gsub(/^!/, "")
+         event['source'] = s
+      end
+
+      if event['trigger'].empty?
+        event['trigger'] = "guess"
+        event['source'] = s
+        event['data'] = m
+      end
+
+      puts "after parse event"
+
+      return event
     end
 
 

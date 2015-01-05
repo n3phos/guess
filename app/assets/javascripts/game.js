@@ -9,14 +9,12 @@ var GameClient = function(game_id) {
   this.current_theme = null;
   this.game_url = $(location).attr('href') + "/games/" + game_id;
 
-  alert(game_url);
-
 }
 
 var game = null;
 
 $(document).ready(function(){
-  $('#game-wrapper').on("initialize", function(game_id) {
+  $('#game-wrapper').on("initialize", function(event, game_id) {
     game = new GameClient(game_id);
     game.initialize();
   });

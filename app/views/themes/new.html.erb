@@ -1,0 +1,17 @@
+<h1> Theme view </h1>
+
+
+<%= form_for(@theme) do |f| %>
+  <%= f.label :video_id %>
+  <%= f.text_field :video_id %>
+
+  <%= f.label :start_seconds %>
+  <%= f.text_field :start_seconds %>
+
+  <%= f.label :end_seconds %>
+  <%= f.text_field :end_seconds %>
+
+  <%= f.file_field :picture %>
+
+  <%= f.submit %>
+<% end %>

@@ -4,10 +4,16 @@
 
     <div id="player"></div>
 
+    <div id="playerb"> </div>
+
+
 
   </div>
 
-  <div id="playerb"> </div>
+  <%= form_for(game, url: update_room_game_path(room, game), method: :patch) do |f| %>
+    <%= f.submit "Update game" %>
+  <% end %>
+
 
 
 </div>

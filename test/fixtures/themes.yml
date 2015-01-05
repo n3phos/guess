@@ -1,0 +1,13 @@
+# Read about fixtures at http://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
+
+one:
+  video_id: MyString
+  start_seconds: 1
+  end_seconds: 1
+  image_path: MyString
+
+two:
+  video_id: MyString
+  start_seconds: 1
+  end_seconds: 1
+  image_path: MyString

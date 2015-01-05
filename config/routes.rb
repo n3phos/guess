@@ -7,6 +7,8 @@ Rails.application.routes.draw do
 
   get 'rooms/new', as: :new_room
 
+
+
   post '/rooms', to: 'rooms#create'
 
   get '/rooms/:name/users', to: 'rooms#users', as: :room_users
@@ -19,9 +21,11 @@ Rails.application.routes.draw do
 
   post '/rooms/:name/games', to: 'games#create', as: :create_room_game
 
-  patch '/rooms/:name/games/:id/', to: 'games#update', as: :update_room_game
+  patch '/rooms/:name/games/:id', to: 'games#update', as: :update_room_game
 
   resources :users
+
+  resources :themes
 
   # The priority is based upon order of creation: first created -> highest priority.
   # See how all your routes lay out with "rake routes".

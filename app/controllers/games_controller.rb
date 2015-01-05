@@ -1,11 +1,19 @@
 class GamesController < ApplicationController
 
+  skip_before_filter :verify_authenticity_token, :only => [:update]
+
   def show
 
 
   end
 
   def create
+
+    @room = nil
+
+    if(params[:name])
+      @room = params[:name]
+    end
 
     @game = Game.new
 
@@ -28,6 +36,8 @@ class GamesController < ApplicationController
       @game.save
 
     end
+
+    render :nothing => true
   end
 
 

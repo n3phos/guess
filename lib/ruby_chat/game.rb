@@ -1,7 +1,15 @@
+$: << '/Users/nephos/.rvm/gems/ruby-2.1.4@guess/gems/rest-client-1.7.2/lib'
+
+$: << '/Users/nephos/.rvm/gems/ruby-2.1.4@guess/gems/netrc-0.10.2/lib'
+
+#require '.rvm/gems/ruby-2.1.4@guess/gems/rest-client-1.7.2/lib/rest-client'
+ #/gems/ruby-2.1.4@guess/gems/rest-client-1.7.2/lib'
+
+require 'rest-client'
 
 class Game
 
-  attr_accessor :cli, :ready, :looping_thread, :active, :started
+  attr_accessor :cli, :ready, :looping_thread, :active, :started, :game_url, :resource, :current_record
 
   def initialize(cli)
 
@@ -12,6 +20,10 @@ class Game
     self.active = true
     self.started = false
     self.game_url = nil
+    self.resource = nil
+    self.current_record = "The Godfather"
+
+    setup
 
     self.ready = Proc.new do
 
@@ -39,12 +51,20 @@ class Game
     self.started
   end
 
+  def guess_theme(guess)
+
+    if(guess.eql?(current_record))
+      on_record_match("mcfake")
+    end
+
+  end
+
   def start
     self.started = true
     next_record
   end
 
-  def on_video_ready(source)
+  def on_video_ready(source, data)
 
     puts "received video_ready"
 
@@ -54,8 +74,20 @@ class Game
 
   end
 
+  def on_guess(source, data)
+    guess_theme(data)
+  end
+
   def active?
     self.active
+  end
+
+  def setup(game_url = 'http://localhost:3000/rooms/lobby/games/7', records = {})
+
+    self.game_url = game_url
+    self.resource = RestClient::Resource.new(game_url)
+
+    puts self.resource.inspect
   end
 
   def loop(delay = 30)
@@ -148,17 +180,27 @@ class Game
   end
 
   def update_game
-
+    self.resource.patch({})
   end
 
-  def dispatch_event(event, source)
-    handler = "on_#{event}"
+  def dispatch_event(event)
+
+    puts "in dispatch_event"
+
+    trigger = event['trigger']
+    source = event['source']
+    data = event['data']
+
+    handler = "on_#{trigger}"
 
     if self.respond_to?(handler)
-      self.send(handler, source)
+      self.send(handler, source, data)
     end
 
   end
 
 
 end
+
+
+
