@@ -1,17 +1,31 @@
 <h1> Theme view </h1>
 
+<div class="row">
+  <div class="col-md-3">
 
-<%= form_for(@theme) do |f| %>
-  <%= f.label :video_id %>
-  <%= f.text_field :video_id %>
+    <%= form_for(@theme) do |f| %>
+      <%= f.label :video_id %>
+      <%= f.text_field :video_id, class: "form-control" %>
 
-  <%= f.label :start_seconds %>
-  <%= f.text_field :start_seconds %>
+      <%= f.label :media_name, "Movie - Series - Game" %>
+      <%= f.text_field :media_name, class: "form-control" %>
 
-  <%= f.label :end_seconds %>
-  <%= f.text_field :end_seconds %>
+      <%= f.label :theme_name, "Theme name" %>
+      <%= f.text_field :theme_name, class: "form-control" %>
 
-  <%= f.file_field :picture %>
+      <%= f.label :theme_interpret, "Theme interpret" %>
+      <%= f.text_field :theme_interpret, class: "form-control" %>
 
-  <%= f.submit %>
-<% end %>
+      <%= f.label :start_seconds %>
+      <%= f.text_field :start_seconds ,class: "form-control" %>
+
+      <%= f.label :end_seconds %>
+      <%= f.text_field :end_seconds ,class: "form-control" %>
+
+      <%= f.file_field :media_image, class: "" %>
+
+      <%= f.submit "Create Theme" , class: "btn btn-primary" %>
+    <% end %>
+
+  </div>
+</div>

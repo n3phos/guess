@@ -85,8 +85,6 @@ module RubyChat
 
       h[:sock] = socket
 
-      puts h
-
       os = OpenStruct.new(h)
 
       puts os

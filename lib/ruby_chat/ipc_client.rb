@@ -20,8 +20,8 @@ module RubyChat
 
     end
 
-    def feed_bot(id, wordlist)
-      req = create_request({ :action => "feed_bot", :target => id, :payload => wordlist})
+    def setup_bot_game(id, game_records)
+      req = create_request({ :action => "setup_bot_game", :target => id, :payload => game_records})
       send_request(req)
     end
 
@@ -36,6 +36,8 @@ module RubyChat
       req = create_request({ :action => "start_bot", :target => id })
       send_request(req)
     end
+
+    
 
     def stop_bot(id)
     end

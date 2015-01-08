@@ -11,10 +11,28 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20150105215344) do
+ActiveRecord::Schema.define(version: 20150107122132) do
+
+  create_table "gamerecords", force: true do |t|
+    t.integer  "theme_id"
+    t.integer  "game_id"
+    t.integer  "history_id"
+    t.boolean  "active"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
 
   create_table "games", force: true do |t|
     t.integer  "history_id"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
+  create_table "histories", force: true do |t|
+    t.integer  "gamerecord_id"
+    t.string   "media_resolver"
+    t.string   "theme_resolver"
+    t.string   "interpret_resolver"
     t.datetime "created_at"
     t.datetime "updated_at"
   end
@@ -26,6 +44,13 @@ ActiveRecord::Schema.define(version: 20150105215344) do
     t.string   "image_path"
     t.datetime "created_at"
     t.datetime "updated_at"
+    t.string   "media_name"
+    t.string   "theme_name"
+    t.string   "theme_interpret"
+    t.string   "media_image_file_name"
+    t.string   "media_image_content_type"
+    t.integer  "media_image_file_size"
+    t.datetime "media_image_updated_at"
   end
 
   create_table "users", force: true do |t|

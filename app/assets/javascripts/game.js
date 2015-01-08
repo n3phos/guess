@@ -6,7 +6,9 @@ var GameClient = function(game_id) {
 
   this.load_delay = 15000;
   this.next_theme = null;
-  this.current_theme = null;
+  this.current_record = null;
+  this.next_record = null;
+  this.last_record = false;
   this.game_url = $(location).attr('href') + "/games/" + game_id;
 
 }
@@ -14,9 +16,10 @@ var GameClient = function(game_id) {
 var game = null;
 
 $(document).ready(function(){
-  $('#game-wrapper').on("initialize", function(event, game_id) {
-    game = new GameClient(game_id);
+  $('#game-wrapper').on("initialize", function(event, opts) {
+    game = new GameClient(opts.game_id);
     game.initialize();
+    game.set_next_record(opts.record);
   });
 });
 
@@ -24,7 +27,7 @@ GameClient.prototype.next = function() {
 
   this.player.stop();
 
-  this.current_theme = this.next_theme;
+  this.current_record = this.next_record;
 
   this.player.play();
 
@@ -34,13 +37,24 @@ GameClient.prototype.handle_event = function(event) {
 
   if(event.match(/next/)) {
     this.next();
+    return;
   }
+
+  if(event.match(/last/)) {
+    this.last();
+    return;
+  }
+
+}
+
+GameClient.prototype.last = function() {
+  this.last_record = true;
 }
 
 GameClient.prototype.test = function() {
 
 
-  this.player.load(this.get_next_record());
+  this.player.load(this.next_theme);
 
 
 }
@@ -81,7 +95,31 @@ GameClient.prototype.on_video_cued = function() {
 var records = [ theme1, theme2, theme3 ];
 
 GameClient.prototype.get_next_record = function () {
-  return records.pop();
+
+
+  $.ajax({
+    url: this.game_url,
+    async: false,
+    type: "GET",
+    dataType: "json",
+    success: function(data) {
+      game.set_next_record(data)
+    }
+  });
+
+}
+
+GameClient.prototype.set_next_record = function(record) {
+
+  this.next_record = record;
+
+  this.next_theme = {
+    "videoId": record.video_id,
+    "startSeconds": record.startSeconds,
+    "endSeconds": record.endSeconds,
+    "suggestedQuality": "small"
+  }
+
 }
 
 GameClient.prototype.load_iframe_api = function() {
@@ -124,6 +162,7 @@ GameClient.prototype.init_players = function(parray) {
 
 GameClient.prototype.on_video_play = function () {
 
+  /*
   var record = this.get_next_record();
 
   if(record == null || record == "undefined") {
@@ -133,6 +172,13 @@ GameClient.prototype.on_video_play = function () {
   this.next_theme = record;
 
   this.player.load(record);
+ */
+
+  if(this.last_record) return;
+
+  this.get_next_record();
+
+  this.player.load(this.next_theme);
 
 }
 

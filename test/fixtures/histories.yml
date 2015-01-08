@@ -1,0 +1,13 @@
+# Read about fixtures at http://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
+
+one:
+  gamerecord_id: 1
+  media_resolver: MyString
+  theme_resolver: MyString
+  interpret_resolver: MyString
+
+two:
+  gamerecord_id: 1
+  media_resolver: MyString
+  theme_resolver: MyString
+  interpret_resolver: MyString

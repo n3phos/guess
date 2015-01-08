@@ -1,6 +1,6 @@
-$: << '/Users/nephos/.rvm/gems/ruby-2.1.4@guess/gems/rest-client-1.7.2/lib'
+#$: << '/Users/nephos/.rvm/gems/ruby-2.1.4@guess/gems/rest-client-1.7.2/lib'
 
-$: << '/Users/nephos/.rvm/gems/ruby-2.1.4@guess/gems/netrc-0.10.2/lib'
+#$: << '/Users/nephos/.rvm/gems/ruby-2.1.4@guess/gems/netrc-0.10.2/lib'
 
 #require '.rvm/gems/ruby-2.1.4@guess/gems/rest-client-1.7.2/lib/rest-client'
  #/gems/ruby-2.1.4@guess/gems/rest-client-1.7.2/lib'
@@ -9,7 +9,7 @@ require 'rest-client'
 
 class Game
 
-  attr_accessor :cli, :ready, :looping_thread, :active, :started, :game_url, :resource, :current_record
+  attr_accessor :cli, :ready, :looping_thread, :active, :started, :game_url, :resource, :current_record, :records, :stage, :rec
 
   def initialize(cli)
 
@@ -21,9 +21,9 @@ class Game
     self.started = false
     self.game_url = nil
     self.resource = nil
-    self.current_record = "The Godfather"
-
-    setup
+    self.stage = 0
+    self.rec = 0
+    self.records = []
 
     self.ready = Proc.new do
 
@@ -47,13 +47,56 @@ class Game
 
   end
 
+  def build_records(wordlist)
+
+    wordlist.each do |r|
+      stages = []
+
+      r.each do |k, v|
+        stage = []
+
+        stage << k
+        stage << v
+
+        stages << stage
+      end
+
+      self.records << stages
+
+    end
+
+    puts self.records.inspect
+
+  end
+
+  def current_record
+    self.records[rec]
+  end
+
+  def current_record_stage
+    current_record[stage][1]
+  end
+
+  def more_stages?
+    stage < current_record.length - 1
+  end
+
+  def more_records?
+    rec < self.records.length - 1
+  end
+
+
   def started?
     self.started
   end
 
   def guess_theme(guess)
 
-    if(guess.eql?(current_record))
+    s = current_record_stage
+
+    puts "current stage: #{s}"
+
+    if(guess.eql?(s))
       on_record_match("mcfake")
     end
 
@@ -61,7 +104,7 @@ class Game
 
   def start
     self.started = true
-    next_record
+    cli.message("#tg-room#1", "!next")
   end
 
   def on_video_ready(source, data)
@@ -82,15 +125,17 @@ class Game
     self.active
   end
 
-  def setup(game_url = 'http://localhost:3000/rooms/lobby/games/7', records = {})
+  def setup(game_opts)
 
-    self.game_url = game_url
+    self.game_url = game_opts['game_url']
     self.resource = RestClient::Resource.new(game_url)
 
-    puts self.resource.inspect
+    self.build_records(game_opts['wordlist'])
+
+
   end
 
-  def loop(delay = 30)
+  def loop(delay = 50)
     self.looping_thread = Thread.new do
 
       puts "in looping thread"
@@ -99,7 +144,7 @@ class Game
 
       solve
 
-      next_record
+      next_record if more_records?
 
     end
   end
@@ -158,6 +203,10 @@ class Game
     cli.channel_users
   end
 
+  def last_record?
+    rec == self.records.length - 1
+  end
+
   def next_record(stop_loop = false)
 
     puts "in next"
@@ -166,21 +215,43 @@ class Game
       self.looping_thread.terminate
     end
 
+    puts "current rec: #{self.rec}"
+
+    update_game
+
+    self.rec += 1
+    self.stage = 0
+
+    cli.message("#tg-room#1", "!last") if last_record?
+
     cli.message("#tg-room#1", "!next")
 
   end
 
   def next_stage
 
+    puts "in next_stage"
+    self.stage += 1
+
   end
 
   def on_record_match(user)
 
-    update_game
+    puts "guess matches current record"
+
+    if more_stages?
+      next_stage
+      return
+    end
+
+    if more_records?
+      next_record(true)
+    end
+
   end
 
   def update_game
-    self.resource.patch({})
+    self.resource.patch({ :current_record => true })
   end
 
   def dispatch_event(event)

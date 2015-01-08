@@ -17,7 +17,7 @@ Rails.application.routes.draw do
 
   get '/rooms/:name/leave', to: 'rooms#leave', as: :room_leave
 
-  get '/rooms/:name/games/:id', to: 'games#show', as: :show_room_game
+  get '/rooms/:name/games/:id', to: 'games#next_record', as: :next_room_game_record
 
   post '/rooms/:name/games', to: 'games#create', as: :create_room_game
 

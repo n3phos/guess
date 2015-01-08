@@ -87,7 +87,11 @@ module RubyChat
 
     end
 
-    def feed(list)
+    def setup_game(payload)
+
+      puts "setting up game.."
+
+      self.game.setup(payload)
 
     end
 

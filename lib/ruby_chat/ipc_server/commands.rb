@@ -26,11 +26,10 @@ module RubyChat
         s.write("pong\n")
       end
 
-      def irc_feed_bot(request)
+      def irc_setup_bot_game(request)
         id = request.target
-        wordlist = request.payload
-
-        bots[id].feed(wordlist)
+        b = bots[id]
+        b.setup_game(request.payload)
       end
 
       def irc_start_bot(request)
