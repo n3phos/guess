@@ -13,10 +13,20 @@ class GamesController < ApplicationController
 
     @theme = @game.next_record_theme
 
+    jsonify_theme
+
     respond_to do |format|
       format.json { render :json => @theme }
     end
 
+  end
+
+  def jsonify_theme()
+    img_url = @theme.media_image.url(:medium)
+
+    @theme = @theme.to_json(:only => [ :video_id, :start_seconds, :end_seconds ] )
+    @theme.chomp!("}")
+    @theme << ", \"img_url\":\"#{img_url}\" }"
   end
 
   def create

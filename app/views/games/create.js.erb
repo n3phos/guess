@@ -3,4 +3,4 @@ $('#game-wrapper').trigger("initialize", { "game_id": "<%= @game.id %>",
                            "record": {"video_id": "<%= @theme.video_id %>",
                                       "startSeconds": "<%= @theme.start_seconds %>",
                                       "endSeconds": "<%= @theme.end_seconds %>",
-                                      "image_url":"" } });
+                                      "img_url":" <%= @theme.media_image.url(:medium) %>" } });

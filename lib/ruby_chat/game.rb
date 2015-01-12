@@ -170,6 +170,7 @@ class Game
       ready?(v)
     end
 
+
     puts "all_ready: #{all_ready}"
 
     if all_ready
@@ -232,6 +233,8 @@ class Game
 
     puts "in next_stage"
     self.stage += 1
+
+    cli.message("#tg-room#1", "!next_stage")
 
   end
 
