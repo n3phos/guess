@@ -40,9 +40,22 @@ GameClient.prototype.next = function() {
 GameClient.prototype.reset_stage = function() {
 
   this.stage = 0;
+
+  $('#media-img').fadeOut(2000);
+
+  /*
   var image = $('img#media-img')[0];
   image.src = "";
   image.style["display"] = "none";
+  */
+
+}
+
+GameClient.prototype.resolve = function() {
+
+  this.resolve_media();
+
+  this.resolve_theme_name();
 
 }
 
@@ -58,24 +71,35 @@ GameClient.prototype.show_media_img = function() {
 
 }
 
+
+
 GameClient.prototype.resolve_theme_name = function() {
 
 }
 
-GameClient.prototype.next_stage = function() {
+GameClient.prototype.next_stage = function(delay) {
 
+  delay = delay || null;
 
   this.stages[this.stage].call(this)
 
-
   this.stage = this.stage + 1;
+
+  if(delay) {
+    setTimeout(function() { game.next(); }, delay);
+  }
+
 }
 
 GameClient.prototype.handle_event = function(event) {
 
   if(event.match(/next/)) {
     if(event.match(/next_stage/)) {
-      this.next_stage();
+      var delay = event.match(/[0-9]+/);
+      if(delay) {
+       delay = parseInt(delay);
+      }
+      this.next_stage(delay);
       return;
     }
     this.next();
@@ -84,6 +108,11 @@ GameClient.prototype.handle_event = function(event) {
 
   if(event.match(/last/)) {
     this.last();
+    return;
+  }
+
+  if(event.match(/resolve/)) {
+    this.resolve();
     return;
   }
 
@@ -108,7 +137,7 @@ GameClient.prototype.initialize = function() {
   this.load_iframe_api();
   this.chat = chat;
 
-  $('#media-img').bind("load", function() { $(this).fadeIn(3000); });
+  $('#media-img').bind("load", function() { $(this).fadeIn(2000); });
 
 }
 

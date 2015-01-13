@@ -9,7 +9,7 @@ require 'rest-client'
 
 class Game
 
-  attr_accessor :cli, :ready, :looping_thread, :active, :started, :game_url, :resource, :current_record, :records, :stage, :rec
+  attr_accessor :cli, :ready, :looping_thread, :active, :started, :game_url, :resource, :current_record, :records, :stage, :rec, :solved
 
   def initialize(cli)
 
@@ -24,6 +24,8 @@ class Game
     self.stage = 0
     self.rec = 0
     self.records = []
+    self.solved = false
+
 
     self.ready = Proc.new do
 
@@ -225,7 +227,8 @@ class Game
 
     cli.message("#tg-room#1", "!last") if last_record?
 
-    cli.message("#tg-room#1", "!next")
+
+    #cli.message("#tg-room#1", "!next")
 
   end
 
@@ -238,6 +241,7 @@ class Game
 
   end
 
+
   def on_record_match(user)
 
     puts "guess matches current record"
@@ -245,12 +249,22 @@ class Game
     if more_stages?
       next_stage
       return
+    else
+      resolve
     end
 
+  end
+
+  def resolve
+
+    event = "!next_stage"
+
     if more_records?
+      event << " 3000"
       next_record(true)
     end
 
+    cli.message("#tg-room#1", event)
   end
 
   def update_game
