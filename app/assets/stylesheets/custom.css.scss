@@ -24,8 +24,22 @@ textarea {
   resize: vertical;
 }
 
-.center {
-  text-align: center;
+.absolute-center {
+  margin: auto;
+  position: absolute;
+  top: 0; left: 0; bottom: 0; right: 0;
+
+}
+
+.margin-center {
+  float: none;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.game-options {
+  height: 150px;
+  width: 30%;
 }
 
 .center h1 {
@@ -61,20 +75,38 @@ footer {
   border: 1px solid #eaeaea;
 }
 
+.chat-container {
+  height: 500px;
+
+}
+
+.chat-input {
+  height: 100px;
+}
+
 .user-container {
   @include chat-border;
-  height: 200px;
+  height: 100%;
 }
 
 .message-display-box {
   @include chat-border;
-  height: 200px;
+  height: 100%;
   overflow: auto;
 
 }
 
+.chat-display {
+  height: 400px;
+}
+
+.room-container {
+  @include chat-border;
+  height: 500px;
+}
+
 .game-box {
-  height: 450px;
+  height: 500px;
   @include chat-border;
 }
 

@@ -66,7 +66,7 @@ WebChat.prototype.on_welcome = function() {
   welcome_user("Welcome to the chat, it took " + seconds + " seconds to init chat");
 
   var game = $('#start-game');
-  game.submit();
+  //game.submit();
 
 }
 

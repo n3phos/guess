@@ -1,5 +1,5 @@
 
-<div id="chat-wrapper" class="row">
+  <div class="col-md-6 chat-container" >
 
   <% content_for :chat do %>
     <%= swf_tag("chat.swf", :width => 0, :height => 0, :id => "my_flash", :div_id => "flashDiv", :parameters => { :allowScriptAccess => "always", :scale => "noScale"}, :callback => "load_callback") %>
@@ -8,41 +8,45 @@
   <div id="flashDiv"></div>
 
 
-  <h2><%= @room.name %></h2>
+
+  <div class="row chat-display">
 
 
 
-  <div class="col-md-3 user-container" >
+    <div class="col-md-4 user-container" >
+      <%-# render :partial => 'shared/chat_users', locals: { room: @room } %>
+    </div>
 
-    <%= render :partial => 'shared/chat_users', locals: { room: @room } %>
+    <div id="table-wrapper" class="col-md-8 message-display-box">
+      <table id="chatWrapper">
+
+      </table>
+    </div>
+  </div>
 
 
+  <div class="row chat-input">
+
+
+    <% if true %>
+
+    <div class="col-md-4"  >
+
+      <%= button_to "leave", '/home' , :class => "btn btn-primary", :method => :get  %>
+      <button onclick="irc_names()" value="names" > </button>
+
+    </div>
+
+    <div id="message-container" class="col-md-8">
+      <textarea id="usermsg" rows="4" cols="30" style="width: 300px;" type="text"> </textarea>
+    </div>
+
+  <% end %>
 
   </div>
 
-  <div id="table-wrapper" class="col-md-9 message-display-box">
-
-
-    <table id="chatWrapper">
-
-    </table>
-
-
-
-  </div>
-
-  <div class="col-md-3" >
-
-    <%= button_to "leave", '/home' , :class => "btn btn-primary", :method => :get  %>
-    <%= button_to "Start Game", :create_room_game, :form => { :id => "start-game" }, :class => "btn btn-primary", :remote => true %>
-    <button onclick="irc_names()" value="names" > </button>
-
-  </div>
-
-  <div id="message-container" class="col-md-9">
-    <textarea id="usermsg" rows="4" cols="30" style="width: 300px;" type="text"> </textarea>
-  </div>
 
 </div>
 
-</div>
+
+
