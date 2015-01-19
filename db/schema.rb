@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20150107122132) do
+ActiveRecord::Schema.define(version: 20150119182249) do
 
   create_table "gamerecords", force: true do |t|
     t.integer  "theme_id"
@@ -26,6 +26,7 @@ ActiveRecord::Schema.define(version: 20150107122132) do
     t.integer  "history_id"
     t.datetime "created_at"
     t.datetime "updated_at"
+    t.boolean  "started"
   end
 
   create_table "histories", force: true do |t|

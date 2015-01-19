@@ -2,7 +2,7 @@ require 'json'
 
 class Room
 
-  attr_accessor :name, :handler, :channel, :room_operator, :users
+  attr_accessor :name, :handler, :channel, :room_operator, :users, :active_game
 
   @@container = {}
   @@room_ids = 0
@@ -16,6 +16,7 @@ class Room
     self.name = ""
     self.handler = irc_handler
     self.users = {}
+    self.active_game = nil
   end
 
   def create(name)

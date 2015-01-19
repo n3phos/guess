@@ -106,6 +106,9 @@ class Game
 
   def start
     self.started = true
+
+    update_game({ :started => true })
+
     cli.message("#tg-room#1", "!next")
   end
 
@@ -220,15 +223,14 @@ class Game
 
     puts "current rec: #{self.rec}"
 
-    update_game
+    update_game({ :current_record => true })
 
     self.rec += 1
     self.stage = 0
 
     cli.message("#tg-room#1", "!last") if last_record?
 
-
-    #cli.message("#tg-room#1", "!next")
+    cli.message("#tg-room#1", "!next") unless stop_loop
 
   end
 
@@ -262,13 +264,16 @@ class Game
     if more_records?
       event << " 3000"
       next_record(true)
+    else
+      update_game({ :started => false })
     end
 
     cli.message("#tg-room#1", event)
   end
 
-  def update_game
-    self.resource.patch({ :current_record => true })
+  def update_game(data)
+
+    self.resource.patch(data)
   end
 
   def dispatch_event(event)

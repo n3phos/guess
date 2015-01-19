@@ -65,8 +65,21 @@ WebChat.prototype.on_welcome = function() {
 
   welcome_user("Welcome to the chat, it took " + seconds + " seconds to init chat");
 
-  var game = $('#start-game');
+  //var game = $('#start-game');
   //game.submit();
+  //
+  //
+  render_game();
+
+}
+
+function render_game() {
+  var new_game_url = $(location).attr('href') + "/games/new"
+
+  $.ajax({
+    url: new_game_url,
+    type: "GET",
+  });
 
 }
 
@@ -182,6 +195,13 @@ WebChat.prototype.connect = function() {
 
 }
 
+WebChat.prototype.leave = function() {
+
+  irc_leave();
+
+}
+
+
 
 $(function() {
   $("#usermsg").keypress(function(e) {
@@ -199,6 +219,8 @@ $(function() {
 window.onbeforeunload = function () {
 
   var curl = $(location).attr('href');
+
+  chat.leave();
 
   $.ajax({
     url: curl + "/leave",
@@ -236,6 +258,12 @@ window.onbeforeunload = function () {
 		{
 		irc_user("guest",0,"mrnobody24");
 		}
+
+  function irc_leave() {
+    var cmd = "QUIT";
+    send_cmd(cmd);
+  }
+
 		
 		function irc_nick(nick)
 		{

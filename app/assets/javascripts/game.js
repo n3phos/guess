@@ -1,26 +1,27 @@
 
 var GameClient = function(game_id) {
+  game_id = game_id || "";
+
   this.url = "";
   this.chat = null;
-  this.player = new Player(this);
+  this.player = null;
 
   this.load_delay = 15000;
   this.next_theme = null;
   this.current_record = null;
   this.next_record = null;
   this.last_record = false;
-  this.game_url = $(location).attr('href') + "/games/" + game_id;
+  this.game_url = null;
   this.stage = 0;
-  this.stages = [ this.resolve_media, this.resolve_theme_name ];
+  this.stages = [ ];
 
 }
 
-var game = null;
+var game = new GameClient();
 
 $(document).ready(function(){
   $('#game-wrapper').on("initialize", function(event, opts) {
-    game = new GameClient(opts.game_id);
-    game.initialize();
+    game.initialize(opts.game_id);
     game.set_next_record(opts.record);
   });
 });
@@ -34,6 +35,19 @@ GameClient.prototype.next = function() {
   this.current_record = this.next_record;
 
   this.player.play();
+
+}
+
+GameClient.prototype.set_game_url = function (game_id) {
+  this.game_url = $(location).attr('href') + "/games/" + game_id;
+}
+
+GameClient.prototype.show = function() {
+
+  $.ajax({
+    url: this.game_url + "/show",
+    type: "GET"
+  });
 
 }
 
@@ -81,9 +95,12 @@ GameClient.prototype.next_stage = function(delay) {
 
   delay = delay || null;
 
-  this.stages[this.stage].call(this)
+  if(this.current_record != null) {
 
-  this.stage = this.stage + 1;
+    this.stages[this.stage].call(this)
+    this.stage = this.stage + 1;
+
+  }
 
   if(delay) {
     setTimeout(function() { game.next(); }, delay);
@@ -132,7 +149,13 @@ GameClient.prototype.test = function() {
 }
 
 
-GameClient.prototype.initialize = function() {
+GameClient.prototype.initialize = function(game_id) {
+
+  this.set_game_url(game_id);
+
+  this.stages = [ this.resolve_media, this.resolve_theme_name ];
+
+  this.player = new Player(this);
 
   this.load_iframe_api();
   this.chat = chat;
@@ -172,7 +195,7 @@ GameClient.prototype.get_next_record = function () {
 
 
   $.ajax({
-    url: this.game_url,
+    url: this.game_url + "/next",
     async: false,
     type: "GET",
     dataType: "json",

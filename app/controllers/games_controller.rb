@@ -4,7 +4,28 @@ class GamesController < ApplicationController
 
   def show
 
+    @room = Room.find(params[:name])
 
+    @game = Game.find(@room.active_game)
+
+    if @game.started
+      @theme = @game.next_record_theme
+    else
+      @theme = @game.current.theme
+    end
+
+    respond_to do |format|
+      format.js { render 'create' }
+    end
+
+  end
+
+  def new
+    @room = Room.find(params[:name])
+
+      respond_to do |format|
+        format.js
+      end
 
   end
 
@@ -34,12 +55,14 @@ class GamesController < ApplicationController
     @room = nil
 
     if(params[:name])
-      @room = params[:name]
+      @room = Room.find(params[:name])
     end
+
 
     @game = Game.new
 
     @game.save
+
 
     themes = Theme.all.shuffle
 
@@ -47,6 +70,7 @@ class GamesController < ApplicationController
 
     @theme = @game.mark_active
 
+    @room.active_game = @game.id
 
 
     list = @game.generate_wordlist
@@ -79,7 +103,22 @@ class GamesController < ApplicationController
 
       end
 
-      @game.history_id = 1337
+      started = params[:started]
+
+      puts "started param is: #{started}"
+      puts "game started is: #{@game.started}"
+
+      if @game.started
+          if started == "false"
+            puts "finding room..."
+            @room = Room.find(params[:name])
+            puts "deactivating game..."
+            @room.active_game = nil
+          end
+      end
+
+      @game.update(:started => started) unless started.nil?
+
 
       @game.save
 

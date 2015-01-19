@@ -182,7 +182,8 @@ module RubyChat
     end
 
     def remove_user(u)
-      self.channel_users.delete(u)
+      puts "in delete user"
+      self.channel_users.delete(u.to_sym)
     end
 
     def parse_users(usr)

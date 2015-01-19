@@ -1,0 +1,7 @@
+<% if !@room.active_game %>
+  $('#game-wrapper').html(" <%= escape_javascript render :partial => 'shared/new_game' %> ");
+<% else %>
+    <% puts "active game" %>
+  game.set_game_url("<%= @room.active_game %>");
+  game.show();
+<% end %>
