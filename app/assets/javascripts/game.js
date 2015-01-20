@@ -14,6 +14,7 @@ var GameClient = function(game_id) {
   this.game_url = null;
   this.stage = 0;
   this.stages = [ ];
+  this.started = false;
 
 }
 
@@ -28,13 +29,13 @@ $(document).ready(function(){
 
 GameClient.prototype.next = function() {
 
-  this.player.stop();
+  //this.player.stop();
 
+
+  console.log("user: " + this.chat.user().name + " in next: " + new Date);
   this.reset_stage();
 
-  this.current_record = this.next_record;
-
-  this.player.play();
+  //this.notice("reset_complete");
 
 }
 
@@ -51,17 +52,27 @@ GameClient.prototype.show = function() {
 
 }
 
+
 GameClient.prototype.reset_stage = function() {
 
   this.stage = 0;
 
-  $('#media-img').fadeOut(2000);
+  $('#media-img').fadeOut({ "duration": 2000,
+                            "complete": function() { game.after_reset(); } });
 
   /*
   var image = $('img#media-img')[0];
   image.src = "";
   image.style["display"] = "none";
   */
+
+}
+
+GameClient.prototype.after_reset = function() {
+
+  this.player.stop();
+
+  this.notice("reset_complete");
 
 }
 
@@ -80,12 +91,23 @@ GameClient.prototype.resolve_media = function() {
 
 GameClient.prototype.show_media_img = function() {
 
-  var image = $('img#media-img')[0];
-  image.src = this.current_record.img_url;
+  $('#media-img').fadeIn(2000);
 
 }
 
+GameClient.prototype.ready = function() {
+  this.chat.irc_msg("!ready");
+}
 
+GameClient.prototype.play = function() {
+
+  console.log("user: " + this.chat.user().name + " recieved play: " + new Date);
+
+  this.current_record = this.next_record;
+
+  this.player.play();
+
+}
 
 GameClient.prototype.resolve_theme_name = function() {
 
@@ -100,11 +122,13 @@ GameClient.prototype.next_stage = function(delay) {
     this.stages[this.stage].call(this)
     this.stage = this.stage + 1;
 
+
+    if(delay) {
+      setTimeout(function() { game.next(); }, delay);
+    }
   }
 
-  if(delay) {
-    setTimeout(function() { game.next(); }, delay);
-  }
+
 
 }
 
@@ -123,6 +147,11 @@ GameClient.prototype.handle_event = function(event) {
     return;
   }
 
+  if(event.match(/play/)) {
+    this.play();
+    return;
+  }
+
   if(event.match(/last/)) {
     this.last();
     return;
@@ -132,7 +161,6 @@ GameClient.prototype.handle_event = function(event) {
     this.resolve();
     return;
   }
-
 
 }
 
@@ -160,36 +188,49 @@ GameClient.prototype.initialize = function(game_id) {
   this.load_iframe_api();
   this.chat = chat;
 
-  $('#media-img').bind("load", function() { $(this).fadeIn(2000); });
+  $('#media-img').bind("load", function() { $(this).hide(); });
 
 }
 
 GameClient.prototype.on_video_cued = function() {
 
-  this.chat.irc_msg("!video_ready");
+  this.notice("video_ready");
+
+}
+
+GameClient.prototype.notice = function(event) {
+
+  switch(event) {
+    case "video_ready":
+      this.video_ready = true;
+      break;
+    case "reset_complete":
+      this.reset = true;
+      break;
+    default:
+      break;
+  }
+
+  if(this.video_ready && this.reset) {
+    this.ready();
+    this.video_ready = false;
+    this.reset = false;
+    return;
+  }
+
+  if(this.video_ready && !this.started) {
+    this.ready();
+    this.started = true;
+    this.video_ready = false;
+    return;
+  }
 
 }
 
 
-  var theme1 = {
-    "videoId": "ygNuRpwZqRU",
-    "startSeconds": 0,
-    "suggestedQuality": "small"
-  }
 
- var theme2 = {
-    "videoId": "ygNuRpwZqRU",
-    "startSeconds": 0,
-    "suggestedQuality": "small"
-  }
 
-  var theme3 = {
-    "videoId": "Ii1tc493bZM",
-    "startSeconds": 0,
-    "suggestedQuality": "small"
-  }
 
-var records = [ theme1, theme2, theme3 ];
 
 GameClient.prototype.get_next_record = function () {
 
@@ -271,11 +312,16 @@ GameClient.prototype.on_video_play = function () {
   this.player.load(record);
  */
 
+  var image = $('img#media-img')[0];
+  image.src = this.current_record.img_url;
+
   if(this.last_record) return;
 
   this.get_next_record();
 
   this.player.load(this.next_theme);
+
+
 
 }
 
@@ -301,9 +347,11 @@ Player.prototype.play = function() {
 
   this.current_player = p;
 
+  setTimeout(function() { game.on_video_play(); }, 3000);
+
   this.current_player.playVideo();
 
-  this.game.on_video_play();
+  //this.game.on_video_play();
 
 }
 
@@ -351,7 +399,6 @@ Player.prototype.load = function(theme) {
 
 Player.prototype.onStateChange = function(event) {
 
-  
   var state = event.data;
 
   switch(state) {
@@ -359,7 +406,6 @@ Player.prototype.onStateChange = function(event) {
       game.on_video_cued();
       break;
   }
- 
 
 }
 

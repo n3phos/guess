@@ -50,7 +50,7 @@ module RubyChat
 
           puts "on join callback"
 
-          update_users(nick)
+          game.update_users(nick)
 
 
         end
@@ -59,7 +59,7 @@ module RubyChat
         on(:quit) do |nick|
 
           remove = true
-          update_users(nick, remove)
+          game.update_users(nick, remove)
 
         end
 
@@ -157,45 +157,6 @@ module RubyChat
         end
 
 
-
-    end
-
-    def update_users(usr, remove = false)
-
-      puts "in update users"
-
-      return unless usr.match(/tgu/)
-
-
-      if !remove
-        add_user(usr)
-      else
-        remove_user(usr)
-      end
-
-      puts "#{self.channel_users.inspect}"
-
-    end
-
-    def add_user(u)
-      self.channel_users.merge!({ u.to_sym => { 'ready' => false } })
-    end
-
-    def remove_user(u)
-      puts "in delete user"
-      self.channel_users.delete(u.to_sym)
-    end
-
-    def parse_users(usr)
-
-
-      cusers = usr.split(" ")
-
-      cusers = cusers.select do |u|
-        u.match(/tgu/)
-      end
-
-      cusers
 
     end
 

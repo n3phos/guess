@@ -10,6 +10,7 @@ require 'rest-client'
 class Game
 
   attr_accessor :cli, :ready, :looping_thread, :active, :started, :game_url, :resource, :current_record, :records, :stage, :rec, :solved
+  attr_accessor :channel_users
 
   def initialize(cli)
 
@@ -25,15 +26,19 @@ class Game
     self.rec = 0
     self.records = []
     self.solved = false
+    self.channel_users = {}
 
 
     self.ready = Proc.new do
 
       puts "in ready callback"
 
+      cli.message("#tg-room#1", "!play")
+
       ret = looping?
 
       puts "thread loop bolean: #{ret}"
+
 
       if !ret
 
@@ -109,10 +114,9 @@ class Game
 
     update_game({ :started => true })
 
-    cli.message("#tg-room#1", "!next")
   end
 
-  def on_video_ready(source, data)
+  def on_ready(source, data)
 
     puts "received video_ready"
 
@@ -206,7 +210,7 @@ class Game
   end
 
   def users
-    cli.channel_users
+    self.channel_users
   end
 
   def last_record?
@@ -266,6 +270,8 @@ class Game
       next_record(true)
     else
       update_game({ :started => false })
+      self.reset
+      finish
     end
 
     cli.message("#tg-room#1", event)
@@ -274,6 +280,21 @@ class Game
   def update_game(data)
 
     self.resource.patch(data)
+  end
+
+  def reset
+    self.game_url = nil
+    self.records = []
+    self.rec = 0
+    self.stage = 0
+    self.resource = nil
+    self.started = false
+    self.looping_thread.terminate
+    self.looping_thread = nil
+  end
+
+  def finish
+
   end
 
   def dispatch_event(event)
@@ -293,6 +314,47 @@ class Game
   end
 
 
+  def update_users(usr, remove = false)
+
+    puts "in update users"
+
+    return unless usr.match(/tgu/)
+
+
+    if !remove
+      add_user(usr)
+    else
+      remove_user(usr)
+    end
+
+    puts "#{self.channel_users.inspect}"
+
+  end
+
+  def add_user(u)
+    self.channel_users.merge!({ u.to_sym => { 'ready' => false } })
+  end
+
+  def remove_user(u)
+    puts "in delete user"
+    self.channel_users.delete(u.to_sym)
+    if self.channel_users.empty? && !self.resource.nil?
+      update_game({ :started => false })
+    end
+  end
+
+  def parse_users(usr)
+
+
+    cusers = usr.split(" ")
+
+    cusers = cusers.select do |u|
+      u.match(/tgu/)
+    end
+
+    cusers
+
+  end
 end
 
 
