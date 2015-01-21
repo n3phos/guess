@@ -33,7 +33,7 @@ class Game
 
       puts "in ready callback"
 
-      cli.message("#tg-room#1", "!play")
+      send_cmd("!play")
 
       ret = looping?
 
@@ -52,6 +52,10 @@ class Game
 
     end
 
+  end
+
+  def send_cmd(cmd)
+    cli.message(cli.channel, cmd)
   end
 
   def build_records(wordlist)
@@ -84,6 +88,10 @@ class Game
     current_record[stage][1]
   end
 
+  def current_record_stage_name
+    current_record[stage][0]
+  end
+
   def more_stages?
     stage < current_record.length - 1
   end
@@ -111,8 +119,23 @@ class Game
 
   def start
     self.started = true
-
     update_game({ :started => true })
+    match_info
+  end
+
+  def match_info(user = "")
+    cr = current_record
+    stage_name = cr[stage][0]
+    stage_val = cr[stage][1]
+
+    cmd = "!match #{stage_name.to_s}"
+
+    if !user.empty?
+      cmd << " #{stage_val}"
+      cmd << " #{user}"
+    end
+
+    send_cmd(cmd)
 
   end
 
@@ -232,9 +255,9 @@ class Game
     self.rec += 1
     self.stage = 0
 
-    cli.message("#tg-room#1", "!last") if last_record?
+    send_cmd("!last") if last_record?
 
-    cli.message("#tg-room#1", "!next") unless stop_loop
+    send_cmd("!next") unless stop_loop
 
   end
 
@@ -243,7 +266,7 @@ class Game
     puts "in next_stage"
     self.stage += 1
 
-    cli.message("#tg-room#1", "!next_stage")
+    send_cmd("!next_stage")
 
   end
 
@@ -274,7 +297,7 @@ class Game
       finish
     end
 
-    cli.message("#tg-room#1", event)
+    send_cmd(event)
   end
 
   def update_game(data)
@@ -287,6 +310,7 @@ class Game
     self.records = []
     self.rec = 0
     self.stage = 0
+    self.started = false
     self.resource = nil
     self.started = false
     self.looping_thread.terminate
@@ -340,6 +364,7 @@ class Game
     self.channel_users.delete(u.to_sym)
     if self.channel_users.empty? && !self.resource.nil?
       update_game({ :started => false })
+      self.reset
     end
   end
 

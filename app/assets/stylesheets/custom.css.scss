@@ -54,6 +54,21 @@ footer {
   color: #777;
 }
 
+.match {
+  height: 50px;
+  text-align: center;
+}
+
+.image-display {
+  margin-top: 20px;
+}
+
+.img-center {
+  display: block;
+  width: auto;
+  margin: auto;
+}
+
 
 footer ul {
   float: right;
@@ -96,17 +111,22 @@ footer {
 
 }
 
+.game-section {
+  @include chat-border;
+  height: 600px;
+}
+
 .chat-display {
-  height: 400px;
+  height: 500px;
 }
 
 .room-container {
   @include chat-border;
-  height: 500px;
+  height: 600px;
 }
 
 .game-box {
-  height: 500px;
+  height: 600px;
   @include chat-border;
 }
 

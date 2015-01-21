@@ -12,6 +12,7 @@ var GameClient = function(game_id) {
   this.next_record = null;
   this.last_record = false;
   this.game_url = null;
+  this.match_info = {};
   this.stage = 0;
   this.stages = [ ];
   this.started = false;
@@ -162,6 +163,35 @@ GameClient.prototype.handle_event = function(event) {
     return;
   }
 
+  if(event.match(/match/)) {
+    var info = event.split(" ");
+
+    var match_name = info[1];
+    var match_val = info[2];
+    var match_resolver = info[3];
+
+    if (typeof match_name != "undefined") {
+      this.match_info["name"] = match_name;
+    }
+
+    if (typeof match_val != "undefined") {
+      this.match_info["val"] = match_val;
+    }
+
+    if (typeof match_resolver != "undefined") {
+      this.match_info["resolver"] = match_resolver;
+    }
+
+    this.display_match_info();
+
+  }
+}
+
+GameClient.prototype.display_match_info = function () {
+
+  if (this.match_info.name) {
+    $('#match-lookup-name').html(this.match_info.name);
+  }
 }
 
 GameClient.prototype.last = function() {

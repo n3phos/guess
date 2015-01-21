@@ -31,7 +31,7 @@ module RubyChat
       chost       = config['host']
       cport       = config['port']
       nick_name   = config['nick']
-      channel     = config['channel']
+      self.channel     = config['channel']
 
       callbacks = Proc.new do
 
