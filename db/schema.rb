@@ -11,7 +11,13 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20150119182249) do
+ActiveRecord::Schema.define(version: 20150126122409) do
+
+  create_table "categories", force: true do |t|
+    t.string   "name"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
 
   create_table "gamerecords", force: true do |t|
     t.integer  "theme_id"
@@ -52,6 +58,7 @@ ActiveRecord::Schema.define(version: 20150119182249) do
     t.string   "media_image_content_type"
     t.integer  "media_image_file_size"
     t.datetime "media_image_updated_at"
+    t.integer  "category_id",              limit: 255
   end
 
   create_table "users", force: true do |t|

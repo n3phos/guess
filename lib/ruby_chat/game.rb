@@ -33,8 +33,6 @@ class Game
 
       puts "in ready callback"
 
-      send_cmd("!play")
-
       ret = looping?
 
       puts "thread loop bolean: #{ret}"
@@ -49,6 +47,9 @@ class Game
         end
 
       end
+
+
+      send_cmd("!play")
 
     end
 
@@ -84,6 +85,10 @@ class Game
     self.records[rec]
   end
 
+  def next_record_stage_name
+    self.records[rec+1][0][0]
+  end
+
   def current_record_stage
     current_record[stage][1]
   end
@@ -105,14 +110,14 @@ class Game
     self.started
   end
 
-  def guess_theme(guess)
+  def guess_theme(guess, user)
 
     s = current_record_stage
 
     puts "current stage: #{s}"
 
     if(guess.eql?(s))
-      on_record_match("mcfake")
+      on_record_match(user)
     end
 
   end
@@ -120,19 +125,25 @@ class Game
   def start
     self.started = true
     update_game({ :started => true })
-    match_info
+    match_info("", false, stage)
   end
 
-  def match_info(user = "")
+  def match_info(user = "", ner = false, stage_nr = stage + 1)
     cr = current_record
-    stage_name = cr[stage][0]
+
+    if !ner
+      stage_name = cr[stage_nr][0]
+    else
+      stage_name = next_record_stage_name
+    end
+
     stage_val = cr[stage][1]
 
-    cmd = "!match #{stage_name.to_s}"
+    cmd = "!match :#{stage_name.to_s}"
 
     if !user.empty?
-      cmd << " #{stage_val}"
-      cmd << " #{user}"
+      cmd << ":#{stage_val}"
+      cmd << ":#{user}"
     end
 
     send_cmd(cmd)
@@ -150,7 +161,9 @@ class Game
   end
 
   def on_guess(source, data)
-    guess_theme(data)
+    if started
+      guess_theme(data, source)
+    end
   end
 
   def active?
@@ -167,16 +180,14 @@ class Game
 
   end
 
-  def loop(delay = 50)
+  def loop(delay = 70)
     self.looping_thread = Thread.new do
 
       puts "in looping thread"
 
       sleep(delay)
 
-      solve
-
-      next_record if more_records?
+      resolve("GameServer", false)
 
     end
   end
@@ -257,13 +268,16 @@ class Game
 
     send_cmd("!last") if last_record?
 
-    send_cmd("!next") unless stop_loop
+    #send_cmd("!next") unless stop_loop
 
   end
 
-  def next_stage
+  def next_stage(user)
 
     puts "in next_stage"
+
+    match_info(user, false)
+
     self.stage += 1
 
     send_cmd("!next_stage")
@@ -275,27 +289,32 @@ class Game
 
     puts "guess matches current record"
 
+
     if more_stages?
-      next_stage
+      next_stage(user)
       return
     else
-      resolve
+      resolve(user)
     end
 
   end
 
-  def resolve
+  def resolve(user, stop_loop = true)
 
     event = "!next_stage"
 
+
     if more_records?
+      match_info(user, true)
       event << " 3000"
-      next_record(true)
+      next_record(stop_loop)
     else
+      match_info(user, false, stage)
       update_game({ :started => false })
       self.reset
       finish
     end
+
 
     send_cmd(event)
   end

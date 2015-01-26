@@ -16,6 +16,7 @@ var GameClient = function(game_id) {
   this.stage = 0;
   this.stages = [ ];
   this.started = false;
+  this.record_player_img = null;
 
 }
 
@@ -23,7 +24,7 @@ var game = new GameClient();
 
 $(document).ready(function(){
   $('#game-wrapper').on("initialize", function(event, opts) {
-    game.initialize(opts.game_id);
+    game.initialize(opts.game_id, opts.record_player_img);
     game.set_next_record(opts.record);
   });
 });
@@ -87,12 +88,17 @@ GameClient.prototype.resolve = function() {
 
 GameClient.prototype.resolve_media = function() {
 
+
+  $('#record-player').fadeOut(1000);
   this.show_media_img();
 }
 
 GameClient.prototype.show_media_img = function() {
 
-  $('#media-img').fadeIn(2000);
+  $('#record-player').fadeOut({ "duration": 1500, "complete": function() { $('#media-img').fadeIn(2000); } });
+  //
+  //
+  //$('#media-img').fadeIn(2000);
 
 }
 
@@ -105,6 +111,13 @@ GameClient.prototype.play = function() {
   console.log("user: " + this.chat.user().name + " recieved play: " + new Date);
 
   this.current_record = this.next_record;
+
+  $('#record-player').fadeIn(1000);
+
+  if(!this.started) {
+    this.started = true;
+    this.query();
+  }
 
   this.player.play();
 
@@ -120,6 +133,7 @@ GameClient.prototype.next_stage = function(delay) {
 
   if(this.current_record != null) {
 
+    this.before_stage();
     this.stages[this.stage].call(this)
     this.stage = this.stage + 1;
 
@@ -131,6 +145,28 @@ GameClient.prototype.next_stage = function(delay) {
 
 
 
+}
+
+GameClient.prototype.before_stage = function() {
+
+  var user = "";
+
+  if(this.match_info.resolver != "GameServer") {
+    user = this.chat.user(this.match_info.resolver);
+    user = user + " - ";
+  }
+
+  var match = $('#match-answer');
+  var answer = this.match_info.val;
+
+  match.html(user + answer);
+
+  match.fadeIn({ "duration": 2000, "complete": setTimeout(function () { game.after_stage(); }, 4000 ) });
+
+}
+
+GameClient.prototype.after_stage = function() {
+  $('#match-answer').fadeOut({"duration": 2000, "complete": function () { game.query(); } });
 }
 
 GameClient.prototype.handle_event = function(event) {
@@ -164,7 +200,7 @@ GameClient.prototype.handle_event = function(event) {
   }
 
   if(event.match(/match/)) {
-    var info = event.split(" ");
+    var info = event.split(":");
 
     var match_name = info[1];
     var match_val = info[2];
@@ -189,9 +225,14 @@ GameClient.prototype.handle_event = function(event) {
 
 GameClient.prototype.display_match_info = function () {
 
+}
+
+GameClient.prototype.query = function() {
+
   if (this.match_info.name) {
     $('#match-lookup-name').html(this.match_info.name);
   }
+
 }
 
 GameClient.prototype.last = function() {
@@ -207,11 +248,13 @@ GameClient.prototype.test = function() {
 }
 
 
-GameClient.prototype.initialize = function(game_id) {
+GameClient.prototype.initialize = function(game_id, img_url) {
 
   this.set_game_url(game_id);
 
-  this.stages = [ this.resolve_media, this.resolve_theme_name ];
+  this.record_player_img = img_url;
+
+  this.stages = [ this.resolve_media, this.resolve_theme_name, this.resolve_theme_name ];
 
   this.player = new Player(this);
 
@@ -219,6 +262,11 @@ GameClient.prototype.initialize = function(game_id) {
   this.chat = chat;
 
   $('#media-img').bind("load", function() { $(this).hide(); });
+
+  $('#record-player')[0].src = img_url;
+  $('#record-player').hide();
+
+
 
 }
 
@@ -250,7 +298,6 @@ GameClient.prototype.notice = function(event) {
 
   if(this.video_ready && !this.started) {
     this.ready();
-    this.started = true;
     this.video_ready = false;
     return;
   }
@@ -378,6 +425,7 @@ Player.prototype.play = function() {
   this.current_player = p;
 
   setTimeout(function() { game.on_video_play(); }, 3000);
+
 
   this.current_player.playVideo();
 

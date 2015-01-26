@@ -2,7 +2,7 @@ require 'json'
 
 class Room
 
-  attr_accessor :name, :handler, :channel, :room_operator, :users, :active_game
+  attr_accessor :name, :handler, :channel, :room_operator, :users, :active_game, :cli
 
   @@container = {}
   @@room_ids = 0
@@ -28,9 +28,13 @@ class Room
 
     config = { 'channel' => channel , 'nick' => room_operator}
 
-    cli = self.handler.clusters[:virgo].cli
+    self.cli = self.handler.clusters[:virgo].cli
     cli.create_bot(config)
     add(self)
+  end
+
+  def setup_game(game_opts)
+    cli.setup_bot_game("virgo#bot_1", game_opts)
   end
 
 

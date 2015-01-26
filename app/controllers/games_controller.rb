@@ -77,7 +77,9 @@ class GamesController < ApplicationController
 
     game_opts = { 'game_url' => request.original_url + "/#{@game.id}", 'wordlist' => list }
 
-    IRC.handler.clusters[:virgo].cli.setup_bot_game("virgo#bot_1", game_opts)
+    @room.setup_game(game_opts)
+
+    #IRC.handler.clusters[:virgo].cli.setup_bot_game("virgo#bot_1", game_opts)
 
     respond_to do |format|
       format.js

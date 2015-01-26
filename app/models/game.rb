@@ -29,16 +29,7 @@ class Game < ActiveRecord::Base
     wordlist = []
 
     themes.each do |t|
-      record = {}
-      media_name = t.media_name
-      theme_name = t.theme_name
-      theme_int = t.theme_interpret
-
-      record[:media_name] = media_name unless media_name.empty?
-      record[:theme_name] = theme_name unless theme_name.empty?
-      record[:theme_int] = theme_int unless theme_int.empty?
-
-      wordlist << record
+      wordlist << t.generate_record
     end
 
     wordlist

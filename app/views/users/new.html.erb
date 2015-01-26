@@ -1,11 +1,21 @@
 
 <div class="jumbotron">
-  <h2>Welcome to theme guess</h2>
 
-  <p>Choose your nickname</p>
-  <%= form_for(@user) do |f| %>
-    <%= f.text_field :nick, class: 'form-control' %>
-    <%= f.submit "Start", class: "btn btn-primary" %>
-  <% end %>
+  <div class="row">
+    <div class="col-md-6 col-md-offset-3 center-text">
+      <h2>Welcome to theme guess</h2>
+
+      <p>Choose your nickname</p>
+      <div class="row">
+        <div class="col-md-6 col-md-offset-3">
+          <%= form_for(@user) do |f| %>
+            <%= f.text_field :nick, class: 'form-control' %>
+            <%= f.submit "Start", class: "btn btn-primary home-btn" %>
+          <% end %>
+        </div>
+      </div>
+
+    </div>
+  </div>
 </div>
 
