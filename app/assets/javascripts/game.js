@@ -17,6 +17,8 @@ var GameClient = function(game_id) {
   this.stages = [ ];
   this.started = false;
   this.record_player_img = null;
+  this.progress = 0;
+  this.progress_steps = [20, 40, 60, 80, 100];
 
 }
 
@@ -59,7 +61,8 @@ GameClient.prototype.reset_stage = function() {
 
   this.stage = 0;
 
-  $('#media-img').fadeOut({ "duration": 2000,
+  $('#media-img').fadeOut({ "duration": 2500,
+                            "progress": function(anim, prog, remainingMs) { game.fade_out_progress(anim, prog, remainingMs); },
                             "complete": function() { game.after_reset(); } });
 
   /*
@@ -70,9 +73,24 @@ GameClient.prototype.reset_stage = function() {
 
 }
 
+GameClient.prototype.fade_out_progress = function(anim, prog, remainingMs) {
+  var perc = Math.round(prog * 100);
+
+  if(perc == this.progress) {
+    console.log("progress: " + prog + "current_vol: " + this.player.current_player.getVolume());
+    this.player.lower_volume();
+    this.progress = this.progress_steps.shift();
+  }
+
+}
+
 GameClient.prototype.after_reset = function() {
 
   this.player.stop();
+
+  this.progress = 0;
+  this.progress_steps = [20, 40, 60, 80, 100];
+  this.player.reset_volume();
 
   this.notice("reset_complete");
 
@@ -89,7 +107,6 @@ GameClient.prototype.resolve = function() {
 GameClient.prototype.resolve_media = function() {
 
 
-  $('#record-player').fadeOut(1000);
   this.show_media_img();
 }
 
@@ -242,6 +259,7 @@ GameClient.prototype.last = function() {
 GameClient.prototype.test = function() {
 
 
+  this.player.init_volume();
   this.player.load(this.next_theme);
 
 
@@ -261,7 +279,7 @@ GameClient.prototype.initialize = function(game_id, img_url) {
   this.load_iframe_api();
   this.chat = chat;
 
-  $('#media-img').bind("load", function() { $(this).hide(); });
+  //$('#media-img').bind("load", function() { $(this).hide(); });
 
   $('#record-player')[0].src = img_url;
   $('#record-player').hide();
@@ -389,8 +407,9 @@ GameClient.prototype.on_video_play = function () {
   this.player.load(record);
  */
 
-  var image = $('img#media-img')[0];
+  var image = $('#media-img')[0];
   image.src = this.current_record.img_url;
+  $('#media-img').hide();
 
   if(this.last_record) return;
 
@@ -412,6 +431,7 @@ var Player = function(game) {
   this.queque = [];
   this.last_load = "b";
   this.game = game;
+  this.current_volume = 75;
 
 }
 
@@ -431,6 +451,10 @@ Player.prototype.play = function() {
 
   //this.game.on_video_play();
 
+}
+
+Player.prototype.init_volume = function () {
+  this.players["a"].setVolume(this.current_volume);
 }
 
 
@@ -485,6 +509,19 @@ Player.prototype.onStateChange = function(event) {
       break;
   }
 
+}
+
+Player.prototype.lower_volume = function() {
+  var vol = this.current_volume - 12;
+
+  this.current_player.setVolume(vol)
+
+  this.current_volume = vol;
+}
+
+Player.prototype.reset_volume = function() {
+  this.current_volume = 75;
+  this.current_player.setVolume(this.current_volume);
 }
 
 
