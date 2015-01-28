@@ -9,7 +9,7 @@ require 'rest-client'
 
 class Game
 
-  attr_accessor :cli, :ready, :looping_thread, :active, :started, :game_url, :resource, :current_record, :records, :stage, :rec, :solved
+  attr_accessor :cli, :ready, :looping_thread, :active, :started, :game_url, :resource, :current_record, :records, :entry_index, :rec_index, :solved
   attr_accessor :channel_users
 
   def initialize(cli)
@@ -22,8 +22,8 @@ class Game
     self.started = false
     self.game_url = nil
     self.resource = nil
-    self.stage = 0
-    self.rec = 0
+    self.entry_index = 0
+    self.rec_index = 0
     self.records = []
     self.solved = false
     self.channel_users = {}
@@ -59,50 +59,36 @@ class Game
     cli.message(cli.channel, cmd)
   end
 
-  def build_records(wordlist)
-
-    wordlist.each do |r|
-      stages = []
-
-      r.each do |k, v|
-        stage = []
-
-        stage << k
-        stage << v
-
-        stages << stage
-      end
-
-      self.records << stages
-
-    end
-
-    puts self.records.inspect
-
-  end
-
   def current_record
-    self.records[rec]
+    self.records[rec_index]
   end
 
-  def next_record_stage_name
-    self.records[rec+1][0][0]
+  def current_record_entries
+    current_record["entries"]
   end
 
-  def current_record_stage
-    current_record[stage][1]
+  def next_record_question
+    self.records[rec_index+1]["entries"][0]["q"]
   end
 
-  def current_record_stage_name
-    current_record[stage][0]
+  def current_question
+    current_entry["q"]
   end
 
-  def more_stages?
-    stage < current_record.length - 1
+  def current_answer
+    current_entry["a"]
+  end
+
+  def current_entry
+    current_record_entries[entry_index]
+  end
+
+  def more_entries?
+    entry_index < current_record_entries.length - 1
   end
 
   def more_records?
-    rec < self.records.length - 1
+    rec_index < self.records.length - 1
   end
 
 
@@ -112,37 +98,37 @@ class Game
 
   def guess_theme(guess, user)
 
-    s = current_record_stage
+    a = current_answer
 
-    puts "current stage: #{s}"
+    puts "guess: #{guess} answer: #{a}"
 
-    if(guess.eql?(s))
+    if(guess.eql?(a))
       on_record_match(user)
     end
-
   end
 
   def start
     self.started = true
     update_game({ :started => true })
-    match_info("", false, stage)
+    match_info("", false, entry_index)
   end
 
-  def match_info(user = "", ner = false, stage_nr = stage + 1)
+  def match_info(user = "", nrq = false, entry = entry_index + 1)
     cr = current_record
+    entries = cr["entries"]
 
-    if !ner
-      stage_name = cr[stage_nr][0]
+    if !nrq
+      question = entries[entry]["q"]
     else
-      stage_name = next_record_stage_name
+      question = next_record_question
     end
 
-    stage_val = cr[stage][1]
+    answer = entries[entry_index]["a"]
 
-    cmd = "!match :#{stage_name.to_s}"
+    cmd = "!match :#{question}"
 
     if !user.empty?
-      cmd << ":#{stage_val}"
+      cmd << ":#{answer}"
       cmd << ":#{user}"
     end
 
@@ -171,13 +157,12 @@ class Game
   end
 
   def setup(game_opts)
-
     self.game_url = game_opts['game_url']
     self.resource = RestClient::Resource.new(game_url)
 
-    self.build_records(game_opts['wordlist'])
+    self.records = game_opts['wordlist']
 
-
+    puts self.records.inspect
   end
 
   def loop(delay = 70)
@@ -248,7 +233,7 @@ class Game
   end
 
   def last_record?
-    rec == self.records.length - 1
+    rec_index == self.records.length - 1
   end
 
   def next_record(stop_loop = false)
@@ -259,12 +244,10 @@ class Game
       self.looping_thread.terminate
     end
 
-    puts "current rec: #{self.rec}"
-
     update_game({ :current_record => true })
 
-    self.rec += 1
-    self.stage = 0
+    self.rec_index += 1
+    self.entry_index = 0
 
     send_cmd("!last") if last_record?
 
@@ -278,7 +261,7 @@ class Game
 
     match_info(user, false)
 
-    self.stage += 1
+    self.entry_index += 1
 
     send_cmd("!next_stage")
 
@@ -290,7 +273,7 @@ class Game
     puts "guess matches current record"
 
 
-    if more_stages?
+    if more_entries?
       next_stage(user)
       return
     else
@@ -309,7 +292,7 @@ class Game
       event << " 3000"
       next_record(stop_loop)
     else
-      match_info(user, false, stage)
+      match_info(user, false, entry_index)
       update_game({ :started => false })
       self.reset
       finish
@@ -327,8 +310,8 @@ class Game
   def reset
     self.game_url = nil
     self.records = []
-    self.rec = 0
-    self.stage = 0
+    self.rec_index = 0
+    self.entry_index = 0
     self.started = false
     self.resource = nil
     self.started = false
@@ -362,7 +345,6 @@ class Game
     puts "in update users"
 
     return unless usr.match(/tgu/)
-
 
     if !remove
       add_user(usr)

@@ -11,11 +11,21 @@ class Theme < ActiveRecord::Base
 
 
   def generate_record
-    record = {}
+    record = {
+      "video_id" => video_id,
+      "entries" => [
+        {
+          "q" => "#{category.name}",
+          "a" => media_name
+        },
+        {
+          "q" => "Theme",
+          "a" => theme_name
+        }
+      ]
+    }
 
-    record["#{category.name}"] = media_name unless media_name.empty?
-    record["Theme"] = theme_name unless theme_name.empty?
-    record["Interpret"] = theme_interpret unless theme_interpret.empty?
+    record["entries"] << { "q" => "Interpret", "a" => theme_interpret } unless theme_interpret.empty?
 
     record
   end
