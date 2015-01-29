@@ -113,7 +113,7 @@ class Game
     match_info("", false, entry_index)
   end
 
-  def match_info(user = "", nrq = false, entry = entry_index + 1)
+  def match_info(user = "", nrq = false, entry = entry_index + 1, last = false)
     cr = current_record
     entries = cr["entries"]
 
@@ -130,6 +130,9 @@ class Game
     if !user.empty?
       cmd << ":#{answer}"
       cmd << ":#{user}"
+      if nrq || last
+        cmd << ":#{cr["video_id"]}"
+      end
     end
 
     send_cmd(cmd)
@@ -292,7 +295,8 @@ class Game
       event << " 3000"
       next_record(stop_loop)
     else
-      match_info(user, false, entry_index)
+      last = true
+      match_info(user, false, entry_index, last)
       update_game({ :started => false })
       self.reset
       finish

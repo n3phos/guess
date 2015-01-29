@@ -17,14 +17,11 @@ class Theme < ActiveRecord::Base
         {
           "q" => "#{category.name}",
           "a" => media_name
-        },
-        {
-          "q" => "Theme",
-          "a" => theme_name
         }
       ]
     }
 
+    record["entries"] << { "q" => "Theme", "a" => theme_name } unless theme_name.empty?
     record["entries"] << { "q" => "Interpret", "a" => theme_interpret } unless theme_interpret.empty?
 
     record

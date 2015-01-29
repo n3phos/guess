@@ -19,6 +19,8 @@ var GameClient = function(game_id) {
   this.record_player_img = null;
   this.progress = 0;
   this.progress_steps = [20, 40, 60, 80, 100];
+  this.rids = 1;
+  this.rhistory = null;
 
 }
 
@@ -30,6 +32,80 @@ $(document).ready(function(){
     game.set_next_record(opts.record);
   });
 });
+
+GameClient.prototype.update_history = function() {
+
+      this.update_record_history();
+}
+
+GameClient.prototype.new_rec_history = function() {
+  var id = this.rids;
+  this.rids = this.rids + 1;
+
+  var wrapper = document.createElement("div");
+
+  var table = document.createElement("table");
+  var tbody = document.createElement("tbody");
+  var tr = document.createElement("tr");
+  var td = document.createElement("td");
+
+  tr.appendChild(td);
+
+  table.id = "record_" + id;
+  table.appendChild(tbody);
+
+  wrapper.appendChild(table);
+
+  td.appendChild(wrapper);
+
+
+  $('#records').prepend(tr);;
+
+  this.rhistory = id;
+
+}
+
+GameClient.prototype.update_record_history = function() {
+  var match = this.match_info;
+
+  var content = ""
+
+  content = "<div> " + match.last_q + " - " + match.answer;
+  if(match.resolver != "GameServer") {
+    content = content + " - " + this.chat.user(match.resolver);
+  }
+  content = content + "</div>";
+
+  this.add_rhistory_entry(content);
+
+  if(typeof match.video_id != "undefined") {
+    var url = "https://www.youtube.com/watch?v=" + match.video_id;
+    content = "<a href=\"" + url + "\">" + url + "</a>";
+    this.add_rhistory_entry(content);
+
+    this.rhistory = null;
+    this.match_info.video_id = undefined;
+
+    this.new_rec_history();
+  }
+
+}
+
+GameClient.prototype.add_rhistory_entry = function(content) {
+  var e = null;
+  var trow = document.createElement("tr");
+  var tdata = document.createElement("td");
+
+  var entry = $(content)[0];
+
+  tdata.appendChild(entry);
+
+  trow.appendChild(tdata);
+  $("#record_" + this.rhistory).css("width", "100%");
+  $("#record_" + this.rhistory).prepend(trow);
+
+}
+
 
 GameClient.prototype.next = function() {
 
@@ -174,7 +250,7 @@ GameClient.prototype.before_stage = function() {
   }
 
   var match = $('#match-answer');
-  var answer = this.match_info.val;
+  var answer = this.match_info.answer;
 
   match.html(user + answer);
 
@@ -183,7 +259,9 @@ GameClient.prototype.before_stage = function() {
 }
 
 GameClient.prototype.after_stage = function() {
-  $('#match-answer').fadeOut({"duration": 2000, "complete": function () { game.query(); } });
+  $('#match-answer').fadeOut({"duration": 2000, "complete": function () { game.query();
+                                                                          game.update_history(); } });
+
 }
 
 GameClient.prototype.handle_event = function(event) {
@@ -219,35 +297,36 @@ GameClient.prototype.handle_event = function(event) {
   if(event.match(/match/)) {
     var info = event.split(":");
 
-    var match_name = info[1];
-    var match_val = info[2];
-    var match_resolver = info[3];
+    var question = info[1];
+    var answer = info[2];
+    var resolver = info[3];
+    var video_id = info[4];
 
-    if (typeof match_name != "undefined") {
-      this.match_info["name"] = match_name;
+    if (typeof question != "undefined") {
+      this.match_info["last_q"] = this.match_info.question;
+      this.match_info["question"] = question;
     }
 
-    if (typeof match_val != "undefined") {
-      this.match_info["val"] = match_val;
+    if (typeof answer != "undefined") {
+      this.match_info["answer"] = answer;
     }
 
-    if (typeof match_resolver != "undefined") {
-      this.match_info["resolver"] = match_resolver;
+    if (typeof resolver != "undefined") {
+      this.match_info["resolver"] = resolver;
     }
 
-    this.display_match_info();
+    if (typeof video_id != "undefined") {
+      this.match_info["video_id"] = video_id;
+    }
 
   }
 }
 
-GameClient.prototype.display_match_info = function () {
-
-}
 
 GameClient.prototype.query = function() {
 
-  if (this.match_info.name) {
-    $('#match-lookup-name').html(this.match_info.name);
+  if (this.match_info.question) {
+    $('#match-lookup-name').html(this.match_info.question);
   }
 
 }
@@ -260,6 +339,7 @@ GameClient.prototype.test = function() {
 
 
   this.player.init_volume();
+  this.new_rec_history();
   this.player.load(this.next_theme);
 
 
@@ -420,6 +500,8 @@ GameClient.prototype.on_video_play = function () {
 
 
 }
+
+
 
 
 

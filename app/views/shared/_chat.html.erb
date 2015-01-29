@@ -1,5 +1,5 @@
 
-  <div class="col-md-6 chat-container" >
+  <div class="col-md-5 chat-container" >
 
   <% content_for :chat do %>
     <%= swf_tag("chat.swf", :width => 0, :height => 0, :id => "my_flash", :div_id => "flashDiv", :parameters => { :allowScriptAccess => "always", :scale => "noScale"}, :callback => "load_callback") %>
