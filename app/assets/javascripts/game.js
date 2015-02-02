@@ -55,6 +55,8 @@ GameClient.prototype.new_rec_history = function() {
   table.appendChild(tbody);
 
   wrapper.appendChild(table);
+  wrapper.className += " record-history";
+  wrapper.id = "rw_" + id;
 
   td.appendChild(wrapper);
 
@@ -62,6 +64,9 @@ GameClient.prototype.new_rec_history = function() {
   $('#records').prepend(tr);;
 
   this.rhistory = id;
+
+  $("#record_" + this.rhistory).css("width", "100%");
+
 
 }
 
@@ -76,7 +81,14 @@ GameClient.prototype.update_record_history = function() {
   }
   content = content + "</div>";
 
+  var rw = "#rw_" + this.rhistory;
+
+  if(! $(rw).hasClass("bordered")) {
+    $(rw).addClass("bordered");
+  }
+
   this.add_rhistory_entry(content);
+
 
   if(typeof match.video_id != "undefined") {
     var url = "https://www.youtube.com/watch?v=" + match.video_id;
@@ -98,11 +110,15 @@ GameClient.prototype.add_rhistory_entry = function(content) {
 
   var entry = $(content)[0];
 
-  tdata.appendChild(entry);
+  if(typeof entry != "undefined") {
+    tdata.appendChild(entry);
+  }
 
   trow.appendChild(tdata);
-  $("#record_" + this.rhistory).css("width", "100%");
-  $("#record_" + this.rhistory).prepend(trow);
+  var record = "#record_" + this.rhistory;
+
+  //$("#record_" + this.rhistory).css("width", "100%");
+  $(record).prepend(trow);
 
 }
 
