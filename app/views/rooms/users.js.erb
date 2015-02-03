@@ -1,2 +1,1 @@
-<%= puts @room %>
 $('#users-wrapper').html("<%= escape_javascript render :partial => 'shared/chat_users', locals: {room: @room} %>");

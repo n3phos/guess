@@ -1,5 +1,4 @@
-
-  <div class="col-md-5 chat-container" >
+<div class="col-md-5 chat-container" >
 
   <% content_for :chat do %>
     <%= swf_tag("chat.swf", :width => 0, :height => 0, :id => "my_flash", :div_id => "flashDiv", :parameters => { :allowScriptAccess => "always", :scale => "noScale"}, :callback => "load_callback") %>
@@ -7,45 +6,36 @@
 
   <div id="flashDiv"></div>
 
-
-
-  <div class="row chat-display">
-
-
-
-    <div class="col-md-4 user-container" >
-      <%= render :partial => 'shared/chat_users', locals: { room: @room } %>
+  <div class="row full-chat" >
+    <div class="col-md-4 chat-divider chat-window" >
+      <div class="user-container">
+        <div id="users-wrapper">
+          <%-# render :partial => 'shared/chat_users', locals: { room: @room } %>
+        </div>
+      </div>
+      <div class="row room-controls">
+        <%= button_to "leave", '/home' , :class => "btn btn-primary", :method => :get  %>
+      </div>
     </div>
 
-    <div id="table-wrapper" class="col-md-8 message-display-box">
-      <table id="chatWrapper">
+    <div class="col-md-8 chat-window">
 
-      </table>
+      <div class="chat-header">
+        <h4> <%= @room.name %> </h4>
+      </div>
+
+      <div id="table-wrapper" class="message-display-box">
+        <%= image_tag('loading-chat.gif', { :class => "img-real-center", :id => "chat-loader" } ) %>
+        <table id="chatWrapper">
+        </table>
+      </div>
+
+      <div id="message-container" class="chat-input">
+        <textarea id="usermsg" type="text" class="text-input"> </textarea>
+      </div>
+
     </div>
   </div>
-
-
-  <div class="row chat-input">
-
-
-    <% if true %>
-
-    <div class="col-md-4"  >
-
-      <%= button_to "leave", '/home' , :class => "btn btn-primary", :method => :get  %>
-      <button onclick="irc_names()" value="names" > </button>
-
-    </div>
-
-    <div id="message-container" class="col-md-8">
-      <textarea id="usermsg" rows="4" cols="30" style="width: 300px;" type="text"> </textarea>
-    </div>
-
-  <% end %>
-
-  </div>
-
-
 </div>
 
 

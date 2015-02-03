@@ -92,7 +92,7 @@ GameClient.prototype.update_record_history = function() {
 
   if(typeof match.video_id != "undefined") {
     var url = "https://www.youtube.com/watch?v=" + match.video_id;
-    content = "<a href=\"" + url + "\">" + url + "</a>";
+    content = "<a href=\"" + url + "\">" + "youtube link" + "</a>";
     this.add_rhistory_entry(content);
 
     this.rhistory = null;
