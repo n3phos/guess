@@ -3,7 +3,14 @@
 
       <div class="absolute-center game-options" >
         <div style="padding:35px" >
-          <%= button_to "Start Game", :create_room_game, :form => { :id => "start-game" }, :class => "btn btn-primary ", :remote => true %>
+          <%-# button_to "Start Game", :create_room_game, :form => { :id => "start-game" }, :class => "btn btn-primary ", :remote => true %>
+
+          <%= form_tag :create_room_game, :remote => true do  -%>
+            <%= submit_tag "Start Game", :id => "start-game", :class => "btn btn-primary" %>
+            <%= hidden_field_tag "categories" %>
+            <%= button_tag "Movie", :type => "button", :id => "btn-movie", :class => "btn btn-primary" %>
+          <% end %>
+
         </div>
       </div>
 

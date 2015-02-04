@@ -60,8 +60,7 @@ GameClient.prototype.new_rec_history = function() {
 
   td.appendChild(wrapper);
 
-
-  $('#records').prepend(tr);;
+  $('#records').prepend(tr);
 
   this.rhistory = id;
 
@@ -83,8 +82,8 @@ GameClient.prototype.update_record_history = function() {
 
   var rw = "#rw_" + this.rhistory;
 
-  if(! $(rw).hasClass("bordered")) {
-    $(rw).addClass("bordered");
+  if(! $(rw).hasClass("record-divider")) {
+      $(rw).addClass("record-divider");
   }
 
   this.add_rhistory_entry(content);
