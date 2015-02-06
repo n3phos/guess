@@ -11,6 +11,7 @@ class Game
 
   attr_accessor :cli, :ready, :looping_thread, :active, :started, :game_url, :resource, :current_record, :records, :entry_index, :rec_index, :solved
   attr_accessor :channel_users
+  attr_accessor :blocked
 
   def initialize(cli)
 
@@ -27,6 +28,7 @@ class Game
     self.records = []
     self.solved = false
     self.channel_users = {}
+    self.blocked = false
 
 
     self.ready = Proc.new do
@@ -96,14 +98,33 @@ class Game
     self.started
   end
 
+  def blocked?
+    self.blocked
+  end
+
+  def lock_guess
+    puts "loking guess"
+    self.blocked = true
+  end
+
+  def unlock_guess
+    puts "unlocking guess"
+    self.blocked = false
+  end
+
   def guess_theme(guess, user)
+    blocked = blocked?
+    puts "blocked res: #{blocked}"
+    if(!blocked)
+      a = current_answer
 
-    a = current_answer
+      puts "guess: #{guess} answer: #{a}"
 
-    puts "guess: #{guess} answer: #{a}"
-
-    if(guess.eql?(a))
-      on_record_match(user)
+      if(guess.eql?(a))
+        on_record_match(user)
+      end
+    else
+      puts "guess was blocked"
     end
   end
 
@@ -174,6 +195,8 @@ class Game
       puts "in looping thread"
 
       sleep(delay)
+
+      lock_and_release_guess
 
       resolve("GameServer", false)
 
@@ -278,11 +301,23 @@ class Game
 
     if more_entries?
       next_stage(user)
-      return
     else
       resolve(user)
     end
 
+    lock_and_release_guess
+  end
+
+  def lock_and_release_guess
+    if !blocked?
+      Thread.new do 
+        lock_guess
+
+        sleep(5)
+
+        unlock_guess
+      end
+    end
   end
 
   def resolve(user, stop_loop = true)

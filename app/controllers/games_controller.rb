@@ -63,8 +63,26 @@ class GamesController < ApplicationController
 
     @game.save
 
+    categories = []
+    categories = params[:categories].split(",") unless params[:categories].empty?
 
-    themes = Theme.all.shuffle
+    if categories.empty?
+      categories << "Movie"
+    end
+
+    puts categories.inspect
+
+    categories = Category.where(name: categories).all
+
+    cat_ids = []
+
+    categories.each do |cat|
+      cat_ids << cat.id
+    end
+
+    puts cat_ids.inspect
+
+    themes = Theme.where(category_id: cat_ids).all.shuffle
 
     Gamerecord.build_records(@game, themes)
 
