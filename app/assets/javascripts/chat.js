@@ -63,7 +63,7 @@ WebChat.prototype.on_welcome = function() {
   seconds = timestamp - seconds;
   seconds = seconds / 1000;
 
-  $('#chat-loader').hide();
+  //$('#chat-loader').hide();
 
   welcome_user("Welcome to the chat, it took " + seconds + " seconds to init chat");
 

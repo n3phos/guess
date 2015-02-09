@@ -33,6 +33,14 @@ $(document).ready(function(){
   });
 });
 
+GameClient.prototype.finish = function() {
+
+  $('#game-controls').css("visibility", "visible");
+
+}
+
+
+
 GameClient.prototype.update_history = function() {
 
       this.update_record_history();
@@ -334,6 +342,13 @@ GameClient.prototype.handle_event = function(event) {
       this.match_info["video_id"] = video_id;
     }
 
+    return;
+
+  }
+
+  if(event.match(/finish/)) {
+    this.finish();
+    return;
   }
 }
 

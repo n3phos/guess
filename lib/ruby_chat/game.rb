@@ -359,7 +359,7 @@ class Game
   end
 
   def finish
-
+    send_cmd("!finish")
   end
 
   def dispatch_event(event)

@@ -7,19 +7,20 @@
         <div id="playerb"> </div>
 
         <div class="match">
-          <h2 id="match-lookup-name">
+          <h2 id="match-lookup-name" style="margin-bottom: 30px">
           </h2>
-          <span id="match-answer" style="display:none">
+          <span id="match-answer" style="display:none" class="answer">
           </span>
         </div>
 
         <div class="image-display" >
-        <img id="media-img" src="" class="img-center" />
+
+          <img id="media-img" src="" class="img-center" />
+
+          <img id="record-player" src="#" class="img-center" />
+
         </div>
 
-        <div class="player-gif">
-          <img id="record-player" src="#" class="img-center" />
-        </div>
 
       </div>
 
@@ -28,6 +29,8 @@
         <div class="game-results" >
         </div>
 
+
+        <%= render :partial => 'shared/game_controls' %>
 
         <div class="game-history">
 

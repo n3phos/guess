@@ -48,12 +48,30 @@ textarea {
   text-align: center;
 }
 
+.loading-container {
+  height: 100px;
+  width: 150px;
+  text-align: center;
+}
+
+.load-gif {
+  display:block;
+  margin:auto;
+  margin-bottom: 6px;
+}
+
+.controls {
+  margin-top: 150px;
+  text-align: center;
+  visibility: hidden;
+}
+
 .game-padding {
   padding-left: 5px;
 }
 
 .game-history {
-  margin-top: 200px;
+  margin-top: 20px;
   height: 280px;
   font-size: 2;
   text-align: center;
@@ -104,17 +122,25 @@ footer {
 }
 
 .match {
-  height: 50px;
+  height: 100px;
   text-align: center;
 }
 
 .image-display {
-  margin-top: 20px;
+  margin-top: 220px;
+  position: relative;
+}
+
+.answer {
+
 }
 
 .img-center {
-  display: block;
-  width: auto;
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  top: 0;
   margin: auto;
 }
 
@@ -207,7 +233,7 @@ footer {
 }
 
 .player-gif {
-  margin-top: 30%;
+  margin-top: 50px;
 }
 
 .game-box {
