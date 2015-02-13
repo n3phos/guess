@@ -1,4 +1,8 @@
-$('#game-wrapper').html("<%= escape_javascript render :partial => 'shared/game', locals: { game: @game, room: @room } %>");
+<% puts "load next is: #{@load_next}" %>
+<% if(!@load_next) %>
+  $('#game-wrapper').html("<%= escape_javascript render :partial => 'shared/game', locals: { game: @game, room: @room } %>");
+<% end %>
+
 $('#game-wrapper').trigger("initialize", { "game_id": "<%= @game.id %>",
                            "record_player_img": "/system/themes/media_images/000/000/016/medium/nice_gif.gif",
                            "record": {"video_id": "<%= @theme.video_id %>",

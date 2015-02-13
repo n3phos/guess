@@ -1,3 +1,9 @@
 <div id="game-controls" class="controls">
-  <%= button_to "New Game", :new_room_game, { :class => "btn btn-primary", :remote => true, :method => :get } %>
+  <%= button_tag "New Game", { :id => "new-game" } %>
+
+          <%-# form_tag :create_room_game, :remote => true do  -%>
+            <%-# submit_tag "New Game", :class => "btn btn-primary start-btn" %>
+            <%-# hidden_field_tag "load_next", "true" %>
+            <%-# hidden_field_tag "categories" %>
+          <%-# end %>
 </div>

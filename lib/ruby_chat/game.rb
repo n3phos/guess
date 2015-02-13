@@ -6,12 +6,17 @@
  #/gems/ruby-2.1.4@guess/gems/rest-client-1.7.2/lib'
 
 require 'rest-client'
+require 'time'
 
 class Game
 
   attr_accessor :cli, :ready, :looping_thread, :active, :started, :game_url, :resource, :current_record, :records, :entry_index, :rec_index, :solved
   attr_accessor :channel_users
   attr_accessor :blocked
+  attr_accessor :delayed_start
+  attr_accessor :last_ready
+  attr_accessor :delay_duration
+  attr_accessor :created_at
 
   def initialize(cli)
 
@@ -29,6 +34,10 @@ class Game
     self.solved = false
     self.channel_users = {}
     self.blocked = false
+    self.delayed_start = false
+    self.last_ready = nil
+    self.delay_duration = 3
+    self.created_at = nil
 
 
     self.ready = Proc.new do
@@ -176,6 +185,10 @@ class Game
     end
   end
 
+  def on_skip(source, data)
+    resolve("GameServer", false)
+  end
+
   def active?
     self.active
   end
@@ -186,7 +199,13 @@ class Game
 
     self.records = game_opts['wordlist']
 
-    puts self.records.inspect
+    if(game_opts['load_next'])
+      puts "created_at: #{game_opts['created_at']}"
+      self.delayed_start = true
+      self.created_at = Time.parse(game_opts['created_at'])
+      send_cmd("!next_game")
+    end
+
   end
 
   def loop(delay = 70)
@@ -228,9 +247,28 @@ class Game
     puts "all_ready: #{all_ready}"
 
     if all_ready
+      if(self.delayed_start)
+        diff = last_ready - created_at
+        puts "time difference is: #{diff}"
 
-      self.ready.call
+        if(diff > delay_duration)
+          puts "diff is greater than delay"
+          self.ready.call
+        else
+          puts "diff is not greater than delay"
+          sleep_duration = delay_duration - diff
 
+          Thread.new do
+            puts "sleeping : #{sleep_duration}"
+            sleep(sleep_duration)
+            self.ready.call
+            self.delayed_start = false
+          end
+        end
+
+      else
+        self.ready.call
+      end
       reset_users
     end
 
@@ -252,6 +290,7 @@ class Game
 
   def set_user_ready(u)
     users[u.to_sym]['ready'] = true
+    self.last_ready = Time.now
   end
 
   def users
@@ -334,7 +373,7 @@ class Game
       match_info(user, false, entry_index, last)
       update_game({ :started => false })
       self.reset
-      finish
+      event = "!finish"
     end
 
 
@@ -356,6 +395,7 @@ class Game
     self.started = false
     self.looping_thread.terminate
     self.looping_thread = nil
+    self.delayed_start = false
   end
 
   def finish

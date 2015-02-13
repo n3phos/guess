@@ -7,17 +7,24 @@
         <div id="playerb"> </div>
 
         <div class="match">
-          <h2 id="match-lookup-name" style="margin-bottom: 30px">
+          <h2 id="match-question" style="margin-bottom: 30px">
           </h2>
           <span id="match-answer" style="display:none" class="answer">
           </span>
+          <div id="game-status" style="visibility: hidden">
+            <%= image_tag('loading-game.gif', :class => "load-gif") %>
+            <div id="status-text">
+              loading new game...
+            </div>
+
+          </div>
         </div>
 
         <div class="image-display" >
 
-          <img id="media-img" src="" class="img-center" />
+          <img id="media-img" src="//:0" class="img-center" />
 
-          <img id="record-player" src="#" class="img-center" />
+          <img id="record-player" src="//:0" class="img-center" />
 
         </div>
 

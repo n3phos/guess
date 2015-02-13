@@ -52,12 +52,19 @@ class GamesController < ApplicationController
 
   def create
 
+    time = Time.now
+
     @room = nil
 
     if(params[:name])
       @room = Room.find(params[:name])
     end
 
+    if(params[:load_next] == "true")
+      @load_next = true
+    else
+      @load_next = false
+    end
 
     @game = Game.new
 
@@ -93,7 +100,7 @@ class GamesController < ApplicationController
 
     list = @game.generate_wordlist
 
-    game_opts = { 'game_url' => request.original_url + "/#{@game.id}", 'wordlist' => list }
+    game_opts = { 'game_url' => request.original_url + "/#{@game.id}", 'wordlist' => list, 'load_next' => @load_next, 'created_at' => time.to_s }
 
     @room.setup_game(game_opts)
 

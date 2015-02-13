@@ -5,6 +5,7 @@ var GameClient = function(game_id) {
   this.url = "";
   this.chat = null;
   this.player = null;
+  this.initialized = false;
 
   this.load_delay = 15000;
   this.next_theme = null;
@@ -14,13 +15,17 @@ var GameClient = function(game_id) {
   this.game_url = null;
   this.match_info = {};
   this.stage = 0;
+  this.stage_reset = false;
   this.stages = [ ];
   this.started = false;
+  this.finished = false;
   this.record_player_img = null;
   this.progress = 0;
   this.progress_steps = [20, 40, 60, 80, 100];
   this.rids = 1;
   this.rhistory = null;
+  this.after_stage_callback = null;
+  this.categories = [];
 
 }
 
@@ -28,22 +33,79 @@ var game = new GameClient();
 
 $(document).ready(function(){
   $('#game-wrapper').on("initialize", function(event, opts) {
-    game.initialize(opts.game_id, opts.record_player_img);
-    game.set_next_record(opts.record);
+    if(!game.initialized) {
+      game.initialize(opts.game_id, opts.record_player_img);
+      game.set_next_record(opts.record);
+    } else {
+      game.set_game_url(opts.game_id);
+      game.set_next_record(opts.record);
+      game.stage_reset = false;
+      game.test();
+    }
+    $('#game-controls').css("visibility", "hidden")
   });
 });
 
 GameClient.prototype.finish = function() {
 
-  $('#game-controls').css("visibility", "visible");
+
+  this.after_stage_callback = function() {
+
+    game.reset();
+
+    $('#match-question').html("Finished");
+
+    $('#game-controls').css("visibility", "visible");
+  }
+
+  this.before_stage();
 
 }
 
+GameClient.prototype.reset = function() {
 
+    this.rids = 1;
+    this.rhistory = null;
+    this.started = false;
+    this.current_record = null;
+    this.next_record = null;
+    this.last_record = false;
+    this.stage = 0;
+    this.game_url = null;
+    this.next_theme = null;
+    this.after_stage_callback = null;
+    this.stage_reset = false;
+
+}
+
+GameClient.prototype.load_new = function() {
+  $('#game-controls').css("visibility", "hidden");
+
+
+  $('#match-question').html("");
+
+  $('#game-status').css("visibility", "visible");
+
+  this.reset_stage(false);
+}
+
+GameClient.prototype.new = function(event) {
+
+  this.chat.irc_msg("!next_game");
+
+  this.load_new();
+
+  $.ajax({
+    "url": $(location).attr('href') + "/games",
+    "type": "POST",
+    "data": { "categories": "",
+              "load_next": "true" }
+  });
+
+}
 
 GameClient.prototype.update_history = function() {
-
-      this.update_record_history();
+  this.update_record_history();
 }
 
 GameClient.prototype.new_rec_history = function() {
@@ -156,13 +218,14 @@ GameClient.prototype.show = function() {
 }
 
 
-GameClient.prototype.reset_stage = function() {
+GameClient.prototype.reset_stage = function(notice) {
+  notice = typeof notice !== 'undefined' ? notice : true;
 
   this.stage = 0;
 
   $('#media-img').fadeOut({ "duration": 2500,
                             "progress": function(anim, prog, remainingMs) { game.fade_out_progress(anim, prog, remainingMs); },
-                            "complete": function() { game.after_reset(); } });
+                            "complete": function() { game.stage_reset_complete(notice); } });
 
   /*
   var image = $('img#media-img')[0];
@@ -183,7 +246,7 @@ GameClient.prototype.fade_out_progress = function(anim, prog, remainingMs) {
 
 }
 
-GameClient.prototype.after_reset = function() {
+GameClient.prototype.stage_reset_complete = function(notice) {
 
   this.player.stop();
 
@@ -191,9 +254,12 @@ GameClient.prototype.after_reset = function() {
   this.progress_steps = [20, 40, 60, 80, 100];
   this.player.reset_volume();
 
-  this.notice("reset_complete");
-
+  if(notice) {
+    this.notice("stage_reset_complete");
+  }
 }
+
+
 
 GameClient.prototype.resolve = function() {
 
@@ -231,6 +297,7 @@ GameClient.prototype.play = function() {
   $('#record-player').fadeIn(1000);
 
   if(!this.started) {
+    $('#game-status').css("visibility", "hidden");
     this.started = true;
     this.query();
   }
@@ -263,7 +330,7 @@ GameClient.prototype.next_stage = function(delay) {
 
 }
 
-GameClient.prototype.before_stage = function() {
+GameClient.prototype.before_stage = function(callback) {
 
   var user = "";
 
@@ -282,8 +349,17 @@ GameClient.prototype.before_stage = function() {
 }
 
 GameClient.prototype.after_stage = function() {
-  $('#match-answer').fadeOut({"duration": 2000, "complete": function () { game.query();
-                                                                          game.update_history(); } });
+  $('#match-answer').fadeOut({"duration": 2000, "complete": function () { game.after_stage_complete(); } });
+
+}
+
+GameClient.prototype.after_stage_complete = function() {
+  this.query();
+  this.update_history();
+
+  if(typeof this.after_stage_callback == "function") {
+    this.after_stage_callback.call();
+  }
 
 }
 
@@ -293,9 +369,13 @@ GameClient.prototype.handle_event = function(event) {
     if(event.match(/next_stage/)) {
       var delay = event.match(/[0-9]+/);
       if(delay) {
-       delay = parseInt(delay);
+        delay = parseInt(delay);
       }
       this.next_stage(delay);
+      return;
+      }
+
+    if(event.match(/next_game/)) {
       return;
     }
     this.next();
@@ -356,7 +436,7 @@ GameClient.prototype.handle_event = function(event) {
 GameClient.prototype.query = function() {
 
   if (this.match_info.question) {
-    $('#match-lookup-name').html(this.match_info.question);
+    $('#match-question').html(this.match_info.question);
   }
 
 }
@@ -375,6 +455,12 @@ GameClient.prototype.test = function() {
 
 }
 
+GameClient.prototype.pls = function () {
+
+  this.new_rec_history();
+  this.player.load(this.next_theme);
+}
+
 
 GameClient.prototype.initialize = function(game_id, img_url) {
 
@@ -389,7 +475,11 @@ GameClient.prototype.initialize = function(game_id, img_url) {
   this.load_iframe_api();
   this.chat = chat;
 
+  this.initialized = true;
+
   //$('#media-img').bind("load", function() { $(this).hide(); });
+
+  $('#new-game').click(game.categories, $.proxy(game.new, this));
 
   $('#record-player')[0].src = img_url;
   $('#record-player').hide();
@@ -410,17 +500,17 @@ GameClient.prototype.notice = function(event) {
     case "video_ready":
       this.video_ready = true;
       break;
-    case "reset_complete":
-      this.reset = true;
+    case "stage_reset_complete":
+      this.stage_reset = true;
       break;
     default:
       break;
   }
 
-  if(this.video_ready && this.reset) {
+  if(this.video_ready && this.stage_reset) {
     this.ready();
     this.video_ready = false;
-    this.reset = false;
+    this.stage_reset = false;
     return;
   }
 
@@ -429,6 +519,7 @@ GameClient.prototype.notice = function(event) {
     this.video_ready = false;
     return;
   }
+
 
 }
 
