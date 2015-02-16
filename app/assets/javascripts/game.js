@@ -1,9 +1,8 @@
 
-var GameClient = function(game_id) {
-  game_id = game_id || "";
+var GameClient = function(chat) {
 
   this.url = "";
-  this.chat = null;
+  this.chat = chat;
   this.player = null;
   this.initialized = false;
 
@@ -26,10 +25,11 @@ var GameClient = function(game_id) {
   this.rhistory = null;
   this.after_stage_callback = null;
   this.categories = [];
+  this.is_loading = false;
 
 }
 
-var game = new GameClient();
+var game = new GameClient(chat);
 
 $(document).ready(function(){
   $('#game-wrapper').on("initialize", function(event, opts) {
@@ -59,6 +59,7 @@ GameClient.prototype.finish = function() {
   }
 
   this.before_stage();
+  this.stages[this.stage].call(this)
 
 }
 
@@ -78,7 +79,23 @@ GameClient.prototype.reset = function() {
 
 }
 
-GameClient.prototype.load_new = function() {
+GameClient.prototype.load_new = function(game_id) {
+  var load_next = null;
+
+  if(!this.initialized) {
+    load_next = false;
+  } else {
+    load_next = true;
+  }
+
+  this.set_game_url(game_id);
+  this.show(load_next);
+
+}
+
+
+GameClient.prototype.load_and_reset = function() {
+
   $('#game-controls').css("visibility", "hidden");
 
 
@@ -93,7 +110,9 @@ GameClient.prototype.new = function(event) {
 
   this.chat.irc_msg("!next_game");
 
-  this.load_new();
+  this.load_and_reset();
+
+  this.is_loading = true;
 
   $.ajax({
     "url": $(location).attr('href') + "/games",
@@ -208,11 +227,13 @@ GameClient.prototype.set_game_url = function (game_id) {
   this.game_url = $(location).attr('href') + "/games/" + game_id;
 }
 
-GameClient.prototype.show = function() {
+GameClient.prototype.show = function(load_next) {
+  load_next = typeof load_next !== 'undefined' ? load_next : false;
 
   $.ajax({
     url: this.game_url + "/show",
-    type: "GET"
+    type: "GET",
+    data: { "load_next": load_next }
   });
 
 }
@@ -299,6 +320,7 @@ GameClient.prototype.play = function() {
   if(!this.started) {
     $('#game-status').css("visibility", "hidden");
     this.started = true;
+    this.is_loading = false;
     this.query();
   }
 
@@ -363,72 +385,93 @@ GameClient.prototype.after_stage_complete = function() {
 
 }
 
-GameClient.prototype.handle_event = function(event) {
+GameClient.prototype.handle_event = function(msg) {
 
-  if(event.match(/next/)) {
-    if(event.match(/next_stage/)) {
-      var delay = event.match(/[0-9]+/);
-      if(delay) {
-        delay = parseInt(delay);
+  var event = msg.text;
+
+  if(msg.from == this.chat.room_op()) {
+
+    if(event.match(/next/)) {
+      if(event.match(/next_stage/)) {
+        var delay = event.match(/[0-9]+/);
+        if(delay) {
+          delay = parseInt(delay);
+        }
+        this.next_stage(delay);
+        return;
       }
-      this.next_stage(delay);
+      this.next();
       return;
+    }
+
+    if(event.match(/play/)) {
+      this.play();
+      return;
+    }
+
+    if(event.match(/last/)) {
+      this.last();
+      return;
+    }
+
+    if(event.match(/resolve/)) {
+      this.resolve();
+      return;
+    }
+
+    if(event.match(/match/)) {
+      var info = event.split(":");
+
+      var question = info[1];
+      var answer = info[2];
+      var resolver = info[3];
+      var video_id = info[4];
+
+      if (typeof question != "undefined") {
+        this.match_info["last_q"] = this.match_info.question;
+        this.match_info["question"] = question;
       }
+
+      if (typeof answer != "undefined") {
+        this.match_info["answer"] = answer;
+      }
+
+      if (typeof resolver != "undefined") {
+        this.match_info["resolver"] = resolver;
+      }
+
+      if (typeof video_id != "undefined") {
+        this.match_info["video_id"] = video_id;
+      }
+      return;
+    }
+
+    if(event.match(/finish/)) {
+      this.finish();
+      return;
+    }
+
+    if(event.match(/new_game/)) {
+      if(this.is_loading) {
+        return;
+      }
+      var game_id = event.split(" ")[1];
+      this.load_new(game_id);
+      return;
+    }
+
+  } else {
 
     if(event.match(/next_game/)) {
+      if(this.is_loading) {
+        return;
+      }
+      var user = this.chat.user(msg.from);
+
+      this.chat.append(user + " has started a new game");
+      this.load_and_reset();
       return;
     }
-    this.next();
-    return;
-  }
-
-  if(event.match(/play/)) {
-    this.play();
-    return;
-  }
-
-  if(event.match(/last/)) {
-    this.last();
-    return;
-  }
-
-  if(event.match(/resolve/)) {
-    this.resolve();
-    return;
-  }
-
-  if(event.match(/match/)) {
-    var info = event.split(":");
-
-    var question = info[1];
-    var answer = info[2];
-    var resolver = info[3];
-    var video_id = info[4];
-
-    if (typeof question != "undefined") {
-      this.match_info["last_q"] = this.match_info.question;
-      this.match_info["question"] = question;
-    }
-
-    if (typeof answer != "undefined") {
-      this.match_info["answer"] = answer;
-    }
-
-    if (typeof resolver != "undefined") {
-      this.match_info["resolver"] = resolver;
-    }
-
-    if (typeof video_id != "undefined") {
-      this.match_info["video_id"] = video_id;
-    }
-
-    return;
-
-  }
-
-  if(event.match(/finish/)) {
-    this.finish();
-    return;
   }
 }
 
@@ -476,6 +519,8 @@ GameClient.prototype.initialize = function(game_id, img_url) {
   this.chat = chat;
 
   this.initialized = true;
+  this.is_loading = true;
+
 
   //$('#media-img').bind("load", function() { $(this).hide(); });
 

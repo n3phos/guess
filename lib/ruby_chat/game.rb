@@ -186,7 +186,7 @@ class Game
   end
 
   def on_skip(source, data)
-    resolve("GameServer", false)
+    resolve("GameServer", true)
   end
 
   def active?
@@ -203,9 +203,11 @@ class Game
       puts "created_at: #{game_opts['created_at']}"
       self.delayed_start = true
       self.created_at = Time.parse(game_opts['created_at'])
-      send_cmd("!next_game")
+
     end
 
+    game_id = game_opts['game_id']
+    send_cmd("!new_game #{game_id}")
   end
 
   def loop(delay = 70)
@@ -368,16 +370,15 @@ class Game
       match_info(user, true)
       event << " 3000"
       next_record(stop_loop)
+      send_cmd(event)
     else
       last = true
       match_info(user, false, entry_index, last)
       update_game({ :started => false })
-      self.reset
-      event = "!finish"
+      self.reset(stop_loop)
+      puts "finishing game..."
+      finish
     end
-
-
-    send_cmd(event)
   end
 
   def update_game(data)
@@ -385,7 +386,7 @@ class Game
     self.resource.patch(data)
   end
 
-  def reset
+  def reset(stop_loop)
     self.game_url = nil
     self.records = []
     self.rec_index = 0
@@ -393,9 +394,15 @@ class Game
     self.started = false
     self.resource = nil
     self.started = false
-    self.looping_thread.terminate
+
+    if(stop_loop)
+      self.looping_thread.terminate unless self.looping_thread.nil?
+    end
+
     self.looping_thread = nil
     self.delayed_start = false
+    self.last_ready = nil
+    self.created_at = nil
   end
 
   def finish
@@ -444,7 +451,7 @@ class Game
     self.channel_users.delete(u.to_sym)
     if self.channel_users.empty? && !self.resource.nil?
       update_game({ :started => false })
-      self.reset
+      self.reset(true)
     end
   end
 

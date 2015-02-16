@@ -14,6 +14,12 @@ class GamesController < ApplicationController
       @theme = @game.current.theme
     end
 
+    if(params[:load_next] == "true")
+      @load_next = true
+    else
+      @load_next = false
+    end
+
     respond_to do |format|
       format.js { render 'create' }
     end
@@ -100,7 +106,7 @@ class GamesController < ApplicationController
 
     list = @game.generate_wordlist
 
-    game_opts = { 'game_url' => request.original_url + "/#{@game.id}", 'wordlist' => list, 'load_next' => @load_next, 'created_at' => time.to_s }
+    game_opts = { 'game_id' => "#{@game.id}", 'game_url' => request.original_url + "/#{@game.id}", 'wordlist' => list, 'load_next' => @load_next, 'created_at' => time.to_s }
 
     @room.setup_game(game_opts)
 

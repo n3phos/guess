@@ -320,9 +320,7 @@ WebChat.prototype.irc_msg = function(msg, target)
       switch(msgs[i].command) {
         case "PRIVMSG":
           if(msgs[i].text.match(/^!/)) {
-            if(msgs[i].from == chat.room_op()) {
-              game.handle_event(msgs[i].text);
-            }
+            game.handle_event(msgs[i]);
             break;
           }
           chat_messages.push(msgs[i]);
