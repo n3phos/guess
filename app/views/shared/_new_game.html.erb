@@ -1,19 +1,21 @@
+<div id="create-game" class="game-options" >
+  <div style="padding:20px" >
 
+      <%= button_tag "New Game", :type => "button", :id => "new-game", :class => "btn btn-primary start-btn"  %>
+      <%= button_tag "Movie", :type => "button", :id => "btn-movie", :class => "btn btn-success" %>
+      <%= button_tag "Series", :type => "button", :id => "btn-series", :class => "btn btn-info" %>
+      <%= button_tag "Game", :type => "button", :id => "btn-game", :class => "btn btn-danger" %>
 
+  </div>
+</div>
 
-      <div class="absolute-center game-options" >
-        <div style="padding:20px" >
-          <%-# button_to "Start Game", :create_room_game, :form => { :id => "start-game" }, :class => "btn btn-primary ", :remote => true %>
+<script>
 
-          <%= form_tag :create_room_game, :remote => true do  -%>
-            <%= submit_tag "Start Game", :id => "start-game", :class => "btn btn-primary start-btn" %>
-            <%= hidden_field_tag "categories" %>
-            <%= button_tag "Movie", :type => "button", :id => "btn-movie", :class => "btn btn-success" %>
-            <%= button_tag "Series", :type => "button", :id => "btn-series", :class => "btn btn-info" %>
-            <%= button_tag "Game", :type => "button", :id => "btn-game", :class => "btn btn-danger" %>
-          <% end %>
+  $('#btn-movie').click("Movie", game.set_category);
+  $('#btn-series').click("Series", game.set_category);
+  $('#btn-game').click("Game", game.set_category);
 
-        </div>
-      </div>
+  $('#new-game').click(game.categories, $.proxy(game.new, game));
 
+</script>
 

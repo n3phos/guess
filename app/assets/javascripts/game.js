@@ -24,8 +24,9 @@ var GameClient = function(chat) {
   this.rids = 1;
   this.rhistory = null;
   this.after_stage_callback = null;
-  this.categories = [];
+  this.categories = "";
   this.is_loading = false;
+  this.joining = false;
 
 }
 
@@ -76,6 +77,7 @@ GameClient.prototype.reset = function() {
     this.next_theme = null;
     this.after_stage_callback = null;
     this.stage_reset = false;
+    this.categories = "";
 
 }
 
@@ -94,6 +96,24 @@ GameClient.prototype.load_new = function(game_id) {
 }
 
 
+GameClient.prototype.set_category = function(event) {
+    var cat = event.data;
+
+    var b = "#" + this.id
+
+    if(game.categories.indexOf(cat) != -1) {
+      game.categories = game.categories.replace(cat + ",", "");
+      $(b).blur();
+    } else {
+      game.categories += cat + ",";
+    }
+
+
+    $(b).button('toggle');
+
+  }
+
+
 GameClient.prototype.load_and_reset = function() {
 
   $('#game-controls').css("visibility", "hidden");
@@ -101,24 +121,27 @@ GameClient.prototype.load_and_reset = function() {
 
   $('#match-question').html("");
 
+  $('#status-text').html("loading game...").css("visibility","visible");
   $('#game-status').css("visibility", "visible");
+
 
   this.reset_stage(false);
 }
 
 GameClient.prototype.new = function(event) {
-
   this.chat.irc_msg("!next_game");
 
-  this.load_and_reset();
+  if(this.initialized) {
+    this.load_and_reset();
+  }
 
   this.is_loading = true;
 
   $.ajax({
     "url": $(location).attr('href') + "/games",
     "type": "POST",
-    "data": { "categories": "",
-              "load_next": "true" }
+    "data": { "categories": game.categories,
+              "load_next": this.initialized }
   });
 
 }
@@ -319,9 +342,12 @@ GameClient.prototype.play = function() {
 
   if(!this.started) {
     $('#game-status').css("visibility", "hidden");
+    $('#status-text').css("visibility", "hidden");
+
     this.started = true;
     this.is_loading = false;
     this.query();
+
   }
 
   this.player.play();
@@ -338,10 +364,22 @@ GameClient.prototype.next_stage = function(delay) {
 
   if(this.current_record != null) {
 
-    this.before_stage();
-    this.stages[this.stage].call(this)
-    this.stage = this.stage + 1;
+    if(this.joining) {
 
+      if(delay) {
+        $('#match-question').html("").removeClass("diablo-font");
+        $('#status-text').css("visibility","hidden");
+        $('#game-status').css("visibility","visible");
+        this.match_info["video_id"] = "";
+
+
+        this.joining = false;
+      }
+    } else {
+      this.before_stage();
+      this.stages[this.stage].call(this)
+      this.stage = this.stage + 1;
+    }
 
     if(delay) {
       setTimeout(function() { game.next(); }, delay);
@@ -495,6 +533,19 @@ GameClient.prototype.test = function() {
   this.new_rec_history();
   this.player.load(this.next_theme);
 
+  if(this.joining) {
+    this.player.current_player = this.player.players.a;
+    this.player.current_player.playVideo();
+
+    $('#media-img')[0].src = game.next_record.img_url;
+
+    $('#match-question').html("STAY AWHILE AND LISTEN").addClass("diablo-font");
+    $('#status-text').html("Active game in progress, next theme starts soon").css("visibility", "visible");
+
+    this.current_record = this.next_record;
+    this.get_next_record();
+    this.player.load(game.next_theme);
+  }
 
 }
 
@@ -524,7 +575,6 @@ GameClient.prototype.initialize = function(game_id, img_url) {
 
   //$('#media-img').bind("load", function() { $(this).hide(); });
 
-  $('#new-game').click(game.categories, $.proxy(game.new, this));
 
   $('#record-player')[0].src = img_url;
   $('#record-player').hide();

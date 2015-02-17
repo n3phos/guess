@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20150126122409) do
+ActiveRecord::Schema.define(version: 20150216193021) do
 
   create_table "categories", force: true do |t|
     t.string   "name"
@@ -46,8 +46,8 @@ ActiveRecord::Schema.define(version: 20150126122409) do
 
   create_table "themes", force: true do |t|
     t.string   "video_id"
-    t.integer  "start_seconds"
-    t.integer  "end_seconds"
+    t.decimal  "start_seconds"
+    t.decimal  "end_seconds"
     t.string   "image_path"
     t.datetime "created_at"
     t.datetime "updated_at"

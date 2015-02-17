@@ -9,7 +9,7 @@ class GamesController < ApplicationController
     @game = Game.find(@room.active_game)
 
     if @game.started
-      @theme = @game.next_record_theme
+      @theme = Game.joining_theme
     else
       @theme = @game.current.theme
     end
@@ -70,6 +70,11 @@ class GamesController < ApplicationController
       @load_next = true
     else
       @load_next = false
+    end
+
+    if(@room.active_game)
+      render :js => "game.is_loading = false"
+      return
     end
 
     @game = Game.new

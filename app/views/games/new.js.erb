@@ -1,28 +1,7 @@
 <% if !@room.active_game %>
 
-  function set_category(event) {
-    var categories = $('#categories')[0];
-    var cat = event.data;
-
-    var b = "#" + this.id
-
-    if(categories.value.indexOf(cat) != -1) {
-      categories.value = categories.value.replace(cat + ",", "");
-      $(b).blur();
-    } else {
-      categories.value += cat + ",";
-    }
-
-
-    $(b).button('toggle');
-
-  }
-
-  $('#game-wrapper').html(" <%= escape_javascript render :partial => 'shared/new_game' %> ");
-
-  $('#btn-movie').click("Movie", set_category);
-  $('#btn-series').click("Series", set_category);
-  $('#btn-game').click("Game", set_category);
+      $('#game-wrapper').html(" <%= escape_javascript render :partial => 'shared/new_game' %> ");
+      $('#create-game').addClass("absolute-center");
 
 <% else %>
     <% puts "active game" %>

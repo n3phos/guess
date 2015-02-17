@@ -4,6 +4,9 @@ class Game < ActiveRecord::Base
   has_many :themes, through: :gamerecords
 
   
+  def self.joining_theme
+    Theme.find_by(theme_name: "tristram_join")
+  end
 
 
   def next_record_theme
