@@ -292,7 +292,7 @@ class Game
 
   def set_user_ready(u)
     users[u.to_sym]['ready'] = true
-    self.last_ready = Time.now
+    self.last_ready = Time.now.utc
   end
 
   def users

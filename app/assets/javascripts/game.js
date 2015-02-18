@@ -35,15 +35,15 @@ var game = new GameClient(chat);
 $(document).ready(function(){
   $('#game-wrapper').on("initialize", function(event, opts) {
     if(!game.initialized) {
-      game.initialize(opts.game_id, opts.record_player_img);
-      game.set_next_record(opts.record);
+      game.initialize(opts);
     } else {
       game.set_game_url(opts.game_id);
       game.set_next_record(opts.record);
       game.stage_reset = false;
       game.test();
+
+      $('#game-controls').css("visibility", "hidden")
     }
-    $('#game-controls').css("visibility", "hidden")
   });
 });
 
@@ -57,6 +57,8 @@ GameClient.prototype.finish = function() {
     $('#match-question').html("Finished");
 
     $('#game-controls').css("visibility", "visible");
+
+    game.finished = true;
   }
 
   this.before_stage();
@@ -125,7 +127,10 @@ GameClient.prototype.load_and_reset = function() {
   $('#game-status').css("visibility", "visible");
 
 
-  this.reset_stage(false);
+  if(this.finished) {
+    this.reset_stage(false);
+  }
+
 }
 
 GameClient.prototype.new = function(event) {
@@ -501,7 +506,7 @@ GameClient.prototype.handle_event = function(msg) {
   } else {
 
     if(event.match(/next_game/)) {
-      if(this.is_loading) {
+      if(this.is_loading || !this.initialized) {
         return;
       }
       var user = this.chat.user(msg.from);
@@ -531,7 +536,10 @@ GameClient.prototype.test = function() {
 
   this.player.init_volume();
   this.new_rec_history();
-  this.player.load(this.next_theme);
+
+  if(this.next_theme != null) {
+    this.player.load(this.next_theme);
+  }
 
   if(this.joining) {
     this.player.current_player = this.player.players.a;
@@ -556,11 +564,11 @@ GameClient.prototype.pls = function () {
 }
 
 
-GameClient.prototype.initialize = function(game_id, img_url) {
+GameClient.prototype.initialize = function(opts) {
 
-  this.set_game_url(game_id);
+  this.set_game_url(opts.game_id);
 
-  this.record_player_img = img_url;
+  this.record_player_img = opts.record_player_img;
 
   this.stages = [ this.resolve_media, this.resolve_theme_name, this.resolve_theme_name ];
 
@@ -576,9 +584,14 @@ GameClient.prototype.initialize = function(game_id, img_url) {
   //$('#media-img').bind("load", function() { $(this).hide(); });
 
 
-  $('#record-player')[0].src = img_url;
+  $('#record-player')[0].src = opts.record_player_img;
   $('#record-player').hide();
 
+  var rec = opts.record;
+
+  if(rec.video_id !== "not_defined") {
+    this.set_next_record(rec);
+  }
 
 
 }

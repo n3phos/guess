@@ -10,6 +10,8 @@ class GamesController < ApplicationController
 
     if @game.started
       @theme = Game.joining_theme
+    elsif(@game.finished)
+      @theme = Game.dummy_theme
     else
       @theme = @game.current.theme
     end
@@ -58,7 +60,7 @@ class GamesController < ApplicationController
 
   def create
 
-    time = Time.now
+    time = Time.now.utc
 
     @room = nil
 
@@ -73,8 +75,14 @@ class GamesController < ApplicationController
     end
 
     if(@room.active_game)
-      render :js => "game.is_loading = false"
-      return
+      @active_game = Game.find(@room.active_game)
+      diff = time - @active_game.created_at
+      puts "last active game was created #{diff} seconds ago"
+
+      if(diff < 10)
+        render :js => "game.is_loading = false"
+        return
+      end
     end
 
     @game = Game.new
@@ -100,7 +108,7 @@ class GamesController < ApplicationController
 
     puts cat_ids.inspect
 
-    themes = Theme.where(category_id: cat_ids).all.shuffle
+    themes = Theme.where(category_id: cat_ids).where(disabled: false).shuffle
 
     Gamerecord.build_records(@game, themes)
 
@@ -151,7 +159,8 @@ class GamesController < ApplicationController
             puts "finding room..."
             @room = Room.find(params[:name])
             puts "deactivating game..."
-            @room.active_game = nil
+            #@room.active_game = nil
+            @game.update(:finished => true)
           end
       end
 

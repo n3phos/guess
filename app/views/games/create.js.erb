@@ -4,16 +4,25 @@
 <% end %>
 
 $('#game-wrapper').trigger("initialize", { "game_id": "<%= @game.id %>",
-                           "record_player_img": "/system/themes/media_images/000/000/016/medium/nice_gif.gif",
-                           "record": {"video_id": "<%= @theme.video_id %>",
+                          "record_player_img": "/system/themes/media_images/000/000/016/medium/nice_gif.gif",
+                          "record": {"video_id": "<%= @theme.video_id %>",
                                       "startSeconds": "<%= @theme.start_seconds.to_f %>",
                                       "endSeconds": "<%= @theme.end_seconds.to_f %>",
                                       "img_url":" <%= @theme.media_image.url(:medium) %>" } });
+
+<% if(@game.finished) %>
+
+    $('#status-text').html("Game is finished").css("visibility","visible");
+    $('#game-controls').css("visibility","visible");
+    game.is_loading = false;
+
+<% end %>
 
 <% if(@game.started) %>
 
     game.joining = true;
 
 <% end %>
+
 
 

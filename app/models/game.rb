@@ -8,6 +8,9 @@ class Game < ActiveRecord::Base
     Theme.find_by(theme_name: "tristram_join")
   end
 
+  def self.dummy_theme
+    Theme.find_by(theme_name: "dummy_theme")
+  end
 
   def next_record_theme
     next_record(current.id).theme
