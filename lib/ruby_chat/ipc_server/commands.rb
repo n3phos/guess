@@ -37,6 +37,15 @@ module RubyChat
         bots[id].start
       end
 
+      def irc_get_game_info(request)
+        id = request.target
+        s = request.sock
+
+        b = bots[id]
+        resp = b.game_info
+        s.write(resp + "\n")
+      end
+
     end
 
   end

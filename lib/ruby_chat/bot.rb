@@ -95,6 +95,10 @@ module RubyChat
 
     end
 
+    def game_info
+      game.info
+    end
+
     def handle_message(source, target, message)
 
       begin

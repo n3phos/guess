@@ -4,12 +4,33 @@ class GamesController < ApplicationController
 
   def show
 
+
     @room = Room.find(params[:name])
 
     @game = Game.find(@room.active_game)
 
     if @game.started
-      @theme = Game.joining_theme
+      time = Time.now.utc
+      #@theme = Game.joining_theme
+      @theme = @game.current.theme
+      resp = @room.game_info
+      puts "respons: #{resp}"
+      q, last_play, last_rec = resp.split(",").map do |t|
+        t.split("=")[1]
+      end
+
+      @last = last_rec
+      @question = q
+      last_play = Time.parse(last_play)
+      diff = time - last_play
+      puts "time: #{time}, last_play #{last_play.to_s}, diff #{diff}"
+      diff += 1
+
+      @theme.start_seconds = 0 unless !@theme.start_seconds.nil?
+      @theme.start_seconds += diff
+      puts "theme start seconds: #{@theme.start_seconds.to_f}"
+      puts "question: #{q}"
+
     elsif(@game.finished)
       @theme = Game.dummy_theme
     else

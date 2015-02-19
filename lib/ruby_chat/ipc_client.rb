@@ -42,6 +42,25 @@ module RubyChat
     def stop_bot(id)
     end
 
+    def game_info(id)
+      puts "requesting game_info"
+      rs = []
+      rs << self.sock
+      response = nil
+
+      req = create_request({ :action => "get_game_info", :target => id })
+      send_request(req)
+
+      readfs = select(rs, nil, nil, 0.1)
+      if readfs
+        response = sock.gets
+        puts "received response"
+        return response
+      else
+        return nil
+      end
+    end
+
     def test
       rs = []
       rs << self.sock

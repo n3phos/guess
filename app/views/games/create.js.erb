@@ -21,6 +21,12 @@ $('#game-wrapper').trigger("initialize", { "game_id": "<%= @game.id %>",
 <% if(@game.started) %>
 
     game.joining = true;
+    game.match_info["question"] = "<%= @question %>";
+
+
+    <% if @last.match(/true/) %>
+        game.last();
+    <% end %>
 
 <% end %>
 

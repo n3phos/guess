@@ -37,6 +37,10 @@ class Room
     cli.setup_bot_game("virgo#bot_1", game_opts)
   end
 
+  def game_info()
+    cli.game_info("virgo#bot_1")
+  end
+
 
   # user model object
   def join(user)

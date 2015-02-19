@@ -17,6 +17,7 @@ class Game
   attr_accessor :last_ready
   attr_accessor :delay_duration
   attr_accessor :created_at
+  attr_accessor :last_play
 
   def initialize(cli)
 
@@ -38,6 +39,7 @@ class Game
     self.last_ready = nil
     self.delay_duration = 3
     self.created_at = nil
+    self.last_play = nil
 
 
     self.ready = Proc.new do
@@ -61,9 +63,15 @@ class Game
 
 
       send_cmd("!play")
+      self.last_play = Time.now.utc
 
     end
 
+  end
+
+  def info
+    puts "in game.info"
+    "q=#{current_question},lastplay=#{self.last_play.to_s},last=#{!more_records?}"
   end
 
   def send_cmd(cmd)
