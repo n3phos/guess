@@ -427,6 +427,19 @@ GameClient.prototype.after_stage_complete = function() {
 
 }
 
+GameClient.prototype.print_hint = function(hint) {
+
+  //var regex = /(\*+)/g
+
+  //var new_hint = hint.replace(regex, '<span class="asteriks-align">' + '$1' + '</span>');
+
+  new_hint = '<span class="hint">' + hint + '</span> ';
+
+  //hint.replace(/\*/, '<span
+
+    this.chat.append("hint: " + new_hint);
+}
+
 GameClient.prototype.handle_event = function(msg) {
 
   var event = msg.text;
@@ -443,6 +456,12 @@ GameClient.prototype.handle_event = function(msg) {
         return;
       }
       this.next();
+      return;
+    }
+
+    if(event.match(/hint/)) {
+      var hint = event.split(":");
+      this.print_hint(hint[1]);
       return;
     }
 

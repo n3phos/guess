@@ -7,6 +7,7 @@
 
 require 'rest-client'
 require 'time'
+require 'game_answer'
 
 class Game
 
@@ -18,6 +19,7 @@ class Game
   attr_accessor :delay_duration
   attr_accessor :created_at
   attr_accessor :last_play
+  attr_accessor :answer
 
   def initialize(cli)
 
@@ -37,9 +39,10 @@ class Game
     self.blocked = false
     self.delayed_start = false
     self.last_ready = nil
-    self.delay_duration = 3
+    self.delay_duration = 4
     self.created_at = nil
     self.last_play = nil
+    self.answer = nil
 
 
     self.ready = Proc.new do
@@ -72,6 +75,17 @@ class Game
   def info
     puts "in game.info"
     "q=#{current_question},lastplay=#{self.last_play.to_s},last=#{!more_records?}"
+  end
+
+  def hint
+    a = answer.show
+
+    cmd = "!hint :#{a}"
+    send_cmd(cmd) unless a.empty?
+  end
+
+  def new_answer
+    self.answer = GameAnswer.new(current_answer)
   end
 
   def send_cmd(cmd)
@@ -214,16 +228,31 @@ class Game
 
     end
 
+    new_answer
+
     game_id = game_opts['game_id']
     send_cmd("!new_game #{game_id}")
   end
 
-  def loop(delay = 70)
+  def loop(delay = 12)
     self.looping_thread = Thread.new do
 
       puts "in looping thread"
 
-      sleep(delay)
+      sleep(8)
+
+      hint
+
+      loops = 2
+
+      while(loops != 0)
+        sleep(delay)
+        hint
+
+        loops -= 1
+      end
+
+      sleep(30)
 
       lock_and_release_guess
 
@@ -326,6 +355,8 @@ class Game
 
     send_cmd("!last") if last_record?
 
+    new_answer
+
     #send_cmd("!next") unless stop_loop
 
   end
@@ -337,6 +368,8 @@ class Game
     match_info(user, false)
 
     self.entry_index += 1
+
+    new_answer
 
     send_cmd("!next_stage")
 

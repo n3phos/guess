@@ -71,6 +71,8 @@ WebChat.prototype.on_welcome = function() {
   //game.submit();
   //
   //
+  //
+  $('#users-wrapper').html('<ul id="user-list" class="list-users"></ul>');
   render_game();
 
 }
@@ -405,16 +407,14 @@ WebChat.prototype.irc_msg = function(msg, target)
    */
     var users = chat._users;
     var user = "";
-    var list = "<ul>";
+    var list = "";
 
     for( var u in users ) {
       user = users[u];
       list += "<li>" + user + "</li>";
     }
 
-    list += "</ul>";
-
-    $('#users-wrapper').html(list);
+    $('#user-list').html(list);
 
   }
 
