@@ -1,0 +1,42 @@
+<div class="container">
+
+  <h1> Themes View </h1>
+
+  <div class="theme-count">
+
+    <%= button_to "New Submission", :new_theme, :class => "btn btn-success", :method => "get" %>
+
+    <h5> There are currently <%= Theme.count %> records in the Database </h5>
+  </div>
+
+  <%= will_paginate @themes, renderer: BootstrapPagination::Rails %>
+
+  <div>
+    <table class="table table-striped">
+      <thead>
+        <tr>
+          <th>id</th>
+          <th>Media Name</th>
+          <th>Theme Name</th>
+          <th>Category</th>
+          <th>youtube</th>
+          <th>edit</th>
+        </tr>
+      </thead>
+      <tbody>
+      <% @themes.each do |t| %>
+        <tr>
+          <td><%= t.id %></td>
+          <td><%= t.media_name %></td>
+          <td><%= t.theme_name %></td>
+          <td><%= t.category.name %></td>
+          <td><a href="<%= "https://www.youtube.com/watch?v=" + t.video_id %>">youtube</a></td>
+          <td><%= link_to "edit", edit_theme_path(t.id) %></td>
+        </tr>
+      <% end %>
+      </tbody>
+    </table>
+  </div>
+
+
+</div>

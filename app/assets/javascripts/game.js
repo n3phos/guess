@@ -27,6 +27,7 @@ var GameClient = function(chat) {
   this.categories = "";
   this.is_loading = false;
   this.joining = false;
+  this.received_reset = false;
 
 }
 
@@ -90,6 +91,7 @@ GameClient.prototype.load_new = function(game_id) {
     load_next = false;
   } else {
     load_next = true;
+    this.load_and_reset();
   }
 
   this.set_game_url(game_id);
@@ -134,13 +136,8 @@ GameClient.prototype.load_and_reset = function() {
 }
 
 GameClient.prototype.new = function(event) {
-  this.chat.irc_msg("!next_game");
 
-  if(this.initialized) {
-    this.load_and_reset();
-  }
-
-  this.is_loading = true;
+  //this.is_loading = true;
 
   $.ajax({
     "url": $(location).attr('href') + "/games",
@@ -516,27 +513,14 @@ GameClient.prototype.handle_event = function(msg) {
     }
 
     if(event.match(/new_game/)) {
-      if(this.is_loading) {
-        return;
-      }
       var game_id = event.split(" ")[1];
       this.load_new(game_id);
       return;
     }
 
-  } else {
-
-    if(event.match(/next_game/)) {
-      if(this.is_loading || !this.initialized) {
-        return;
-      }
-      var user = this.chat.user(msg.from);
-
-      this.chat.append(user + " has started a new game");
-      this.load_and_reset();
-      return;
-    }
   }
+
+
 }
 
 

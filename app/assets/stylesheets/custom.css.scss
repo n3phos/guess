@@ -116,8 +116,21 @@ textarea {
 
 .user-list-wrapper {
 
-  overflow: auto;
+  overflow: hidden;
 
+  &:hover {
+
+    overflow-y: scroll;
+  }
+
+}
+
+.theme-count {
+  margin-top: 30px;
+}
+
+.themes {
+  margin-top: 20px;
 }
 
 .close-hint {

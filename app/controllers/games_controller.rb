@@ -146,9 +146,10 @@ class GamesController < ApplicationController
 
     #IRC.handler.clusters[:virgo].cli.setup_bot_game("virgo#bot_1", game_opts)
 
-    respond_to do |format|
-      format.js
-    end
+    #respond_to do |format|
+    #  format.js
+    #end
+    render :nothing => true
 
   end
 

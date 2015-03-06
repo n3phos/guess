@@ -10,6 +10,7 @@ class GameAnswer
     @mask_char = "*"
     @revealed = []
     @store = answer.scan(/./)
+    @steps = 3
 
     @index_pool = (0..@store.length - 1).to_a
 
@@ -44,6 +45,8 @@ class GameAnswer
       end
       c
     end
+
+    @steps -= 1
 
     answer.join
   end

@@ -1,7 +1,19 @@
-<div class="container">
-  <h1> Theme view </h1>
 
-  <div class="row">
+<div>
+
+  <h3> Edit View </h3>
+
+  <p> Theme name </p>
+  <p> <%= @theme.theme_name %> </p>
+
+
+  <div class="col-md-12">
+
+    <div class="row">
+      <div class="col-md-5">
+        <%= image_tag @theme.media_image.url(:medium) %>
+      </div>
+
     <div class="col-md-3">
 
       <%= form_for(@theme) do |f| %>
@@ -28,9 +40,16 @@
 
         <%= f.file_field :media_image, class: "" %>
 
-        <%= f.submit "Create Theme" , class: "btn btn-primary" %>
+        <%= f.label :disabled %>
+        <%= f.check_box :disabled, class: "checkbox" %>
+
+        <%= f.submit "Save Changes" , class: "btn btn-primary" %>
       <% end %>
 
     </div>
+
   </div>
+  </div>
+</div>
+
 </div>

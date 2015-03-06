@@ -243,7 +243,7 @@ class Game
 
       hint
 
-      loops = 2
+      loops = 5
 
       while(loops != 0)
         sleep(delay)
@@ -251,8 +251,6 @@ class Game
 
         loops -= 1
       end
-
-      sleep(30)
 
       lock_and_release_guess
 
