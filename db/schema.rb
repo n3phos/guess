@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20150218182633) do
+ActiveRecord::Schema.define(version: 20150309212602) do
 
   create_table "categories", force: true do |t|
     t.string   "name"
@@ -41,6 +41,20 @@ ActiveRecord::Schema.define(version: 20150218182633) do
     t.string   "media_resolver"
     t.string   "theme_resolver"
     t.string   "interpret_resolver"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
+  create_table "questions", force: true do |t|
+    t.string   "ques"
+    t.string   "answer"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
+  create_table "theme_questions", force: true do |t|
+    t.integer  "theme_id"
+    t.integer  "question_id"
     t.datetime "created_at"
     t.datetime "updated_at"
   end
