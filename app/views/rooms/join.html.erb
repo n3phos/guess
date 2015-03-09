@@ -1,5 +1,9 @@
 
-<div id="room-wrapper" >
+<% content_for :room do %>
+
+<div id="room-wrapper" class="container-fluid">
+
+  <%= render 'layouts/header' %>
 
 
   <div class="room-container row">
@@ -9,9 +13,16 @@
     </div>
 
 
-    <%= render 'shared/game_wrapper' %>
 
+    <%= render 'shared/game_wrapper' %>
 
   </div>
 
-</div>
+  </div>
+
+  <%= render 'layouts/footer' %>
+
+  <%= debug(params) if Rails.env.development? %>
+
+<% end %>
+

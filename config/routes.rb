@@ -1,6 +1,8 @@
 Rails.application.routes.draw do
 
 
+  get 'static_pages/contribute', as: :contribute
+
   get '/home', to: 'users#new', as: :home
 
   get '/rooms/:name', to: 'rooms#join', as: :join_room
