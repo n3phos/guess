@@ -3,6 +3,8 @@ class ThemesController < ApplicationController
   def new
 
     @theme = Theme.new
+    3.times{ @theme.questions.build }
+    @submissions = Submission.order('created_at DESC')
 
   end
 
@@ -16,9 +18,16 @@ class ThemesController < ApplicationController
 
     @theme = Theme.new(theme_params)
     @theme.media_image = params[:theme][:media_image]
+    @theme.disabled = true
     @theme.save
 
-    redirect_to @theme
+    @theme.questions.build(params[:theme][:questions])
+
+    Submission.create({ :user_id => current_user.id,:theme_id => @theme.id })
+
+    redirect_to 'new'
+
+
 
   end
 
@@ -47,7 +56,11 @@ class ThemesController < ApplicationController
   private
 
   def theme_params
-    params.require(:theme).permit(:video_id, :media_name, :category_id, :theme_name, :theme_interpret, :start_seconds, :end_seconds, :disabled)
+    params.require(:theme).permit(:video_id, :media_name, :category_id, :theme_name, :theme_interpret, :start_seconds, :end_seconds, :questions_attributes => [ :ques, :answer ] )
+  end
+
+  def question_params
+    params.require(:theme_questions).permit(:ques, :answer)
   end
 
 end

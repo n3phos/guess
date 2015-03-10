@@ -1,0 +1,25 @@
+
+<h1> Rooms view </h1>
+
+<div>
+
+  <table class="table">
+    <thead>
+      <tr>
+        <th>Name</th>
+        <th>Join</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+      <% @rooms.each do |r| %>
+        <td> <%= r.name %> </td>
+        <td> </td>
+      <% end %>
+      </tr>
+    </tbody>
+  </table>
+
+</div>
+
+

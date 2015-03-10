@@ -9,6 +9,8 @@ Rails.application.routes.draw do
 
   get 'rooms/new', as: :new_room
 
+  get '/rooms', to: 'rooms#index', as: :rooms
+
 
 
   post '/rooms', to: 'rooms#create'

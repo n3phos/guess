@@ -11,6 +11,10 @@ class Room
     @@container[id.to_sym]
   end
 
+  def self.all
+    @@container.values
+  end
+
 
   def initialize(irc_handler)
     self.name = ""

@@ -12,6 +12,8 @@ class Theme < ActiveRecord::Base
 
   validates_attachment_content_type :media_image, :content_type => /\Aimage\/.*\Z/
 
+  accepts_nested_attributes_for :questions
+
 
   def generate_record
     record = {

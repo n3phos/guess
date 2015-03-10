@@ -46,6 +46,14 @@ textarea {
 
 }
 
+.form-inline .form-control {
+
+    display: inline-block;
+    width: 100%;
+    vertical-align: middle;
+}
+
+
 .dev-icon {
   height: 100%;
   width: 100%;
@@ -69,6 +77,10 @@ textarea {
 .notes-icon-size {
   width: 350px;
   margin: auto;
+}
+
+.form-answer {
+  margin-bottom: 15px;
 }
 
 .contrib-submission {

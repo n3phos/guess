@@ -65,4 +65,10 @@ class RoomsController < ApplicationController
     end
   end
 
+  def index
+
+    @rooms = Room.all
+
+  end
+
 end

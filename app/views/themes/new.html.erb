@@ -1,10 +1,10 @@
 <div class="container">
   <h1> Theme view </h1>
 
+      <%= form_for(@theme) do |f| %>
   <div class="row">
     <div class="col-md-3">
 
-      <%= form_for(@theme) do |f| %>
         <%= f.label :video_id %>
         <%= f.text_field :video_id, class: "form-control" %>
 
@@ -26,11 +26,85 @@
         <%= f.label :end_seconds %>
         <%= f.text_field :end_seconds ,class: "form-control" %>
 
-        <%= f.file_field :media_image, class: "" %>
+        <%-# f.file_field :media_image, class: "btn btn-primary" %>
 
-        <%= f.submit "Create Theme" , class: "btn btn-primary" %>
-      <% end %>
+        <div style="position:relative; margin-bottom: 10px; margin-top: 10px;">
+                <a class='btn btn-primary' href='javascript:;'>
+                    Choose Image...
+                    <input type="file" style='position:absolute;z-index:2;top:0;left:0;filter: alpha(opacity=0);-ms-filter:"progid:DXImageTransform.Microsoft.Alpha(Opacity=0)";opacity:0;background-color:transparent;color:transparent;' name="file_source" size="40"  onchange='$("#upload-file-info").html($(this).val());'>
+                </a>
+                &nbsp;
+                <span class='label label-info' id="upload-file-info"></span>
+        </div>
+        <%= f.submit "Submit Theme" , class: "btn btn-primary" %>
+
+      </div>
+
+      <div class="col-md-4">
+
+        <%= f.fields_for :questions do |f_ques| %>
+
+
+          <div class="form-inline">
+            <div class="col-md-3">
+              <%= f_ques.label :ques, 'Question'  %>
+            </div>
+            <div class="col-md-9">
+              <%= f_ques.text_field :ques, class: "form-control" %>
+            </div>
+          </div>
+
+          <div class="form-inline">
+
+            <div class="col-md-3">
+              <%= f_ques.label :answer %>
+            </div>
+
+            <div class="col-md-9">
+              <%= f_ques.text_field :answer, class: "form-control form-answer" %>
+            </div>
+          </div>
+
+        <% end %>
 
     </div>
+
+      </div>
+
+  </div>
+  <% end %>
+
+
+  <div class="pending">
+
+    <div class="row">
+      <div class="col-md-6">
+
+    <h3> Pending Submissions </h3>
+
+    <table class="table">
+
+      <thead>
+        <tr>
+          <th> Theme name </th>
+          <th> Submitted on </th>
+          <th> Submitted by </th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <% @submissions.each do |s| %>
+            <td><%= s.theme.theme_name %></td>
+            <td><%= s.created_at %></td>
+            <td><%= s.user.nick %></td>
+          <% end %>
+        </tr>
+      </tbody>
+
+    </table>
+
+  </div>
+</div>
+
   </div>
 </div>
