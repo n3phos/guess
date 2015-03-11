@@ -53,6 +53,14 @@ textarea {
     vertical-align: middle;
 }
 
+.list-group-item {
+  display: list-item;
+}
+
+.list-group {
+  list-style-position: inside;
+}
+
 
 .dev-icon {
   height: 100%;

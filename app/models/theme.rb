@@ -8,6 +8,8 @@ class Theme < ActiveRecord::Base
   has_many :theme_questions
   has_many :questions, through: :theme_questions
 
+  has_one :submission, :dependent => :destroy
+
   has_attached_file :media_image, :styles => { :medium => "400x400>"}
 
   validates_attachment_content_type :media_image, :content_type => /\Aimage\/.*\Z/

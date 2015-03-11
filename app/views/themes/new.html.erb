@@ -1,9 +1,45 @@
 <div class="container">
   <h1> Theme view </h1>
 
-      <%= form_for(@theme) do |f| %>
-  <div class="row">
-    <div class="col-md-3">
+    <div class="col-md-5">
+<h3> How to make a new submission </h3>
+
+    <ol class="list-group">
+      <li class="list-group-item">
+        <p> Browse to <%= link_to "youtube.com", "https://youtube.com" %> </p>
+      </li>
+      <li class="list-group-item">
+      <p> Search for the theme soundtrack you want to submit. The video should last atleast 30 seconds and have a good audio quality </p>
+      </li>
+      <li class="list-group-item"> 
+      <p>Once found, you can copy the youtube link from your video and insert it into the <b>Video</b> form field </p>
+      </li>
+      <li class="list-group-item">
+      <p>Now fill in the media name, for example if your theme is from the Movie "The Lord of the Rings" the form field
+      <b>Movie - Series - Game</b> would be equal to "The Lord of the Rings". </p>
+      </li>
+      <li class="list-group-item">
+      <p><b>Theme name</b> is the name of the actual soundtrack that is playing<p>
+      </li>
+      <li class="list-group-item">
+      <p>(optional) Add the the interpret / composer of the theme </p>
+      </li>
+      <li class="list-group-item">
+      <p>(optional) You can set the start and the end seconds of the video to play a specific passage of the soundtrack 
+      for example if the part starts at minute 1:20 you can set start seconds to 80 seconds <p>
+      </li>
+      <li class="list-group-item">
+      <p>(optional) You should also add some quizz questions, these can be Movie or Game related or whatever is the case.
+      For example in the case of The Lord of the Rings, one could ask "What is Gollums real name?" answer: "Smeagol".
+      </li>
+    </ol>
+
+  </div>
+
+    <div class="col-md-7">
+<%= form_for(@theme) do |f| %>
+  <div class="row" style="margin-top: 31px;">
+    <div class="col-md-6">
 
         <%= f.label :video_id %>
         <%= f.text_field :video_id, class: "form-control" %>
@@ -40,7 +76,7 @@
 
       </div>
 
-      <div class="col-md-4">
+      <div class="col-md-6" style="margin-top: 22px;">
 
         <%= f.fields_for :questions do |f_ques| %>
 
@@ -67,12 +103,18 @@
 
         <% end %>
 
+
+
     </div>
 
       </div>
 
   </div>
   <% end %>
+
+    
+  </div>
+
 
 
   <div class="pending">
@@ -92,13 +134,13 @@
         </tr>
       </thead>
       <tbody>
-        <tr>
           <% @submissions.each do |s| %>
-            <td><%= s.theme.theme_name %></td>
-            <td><%= s.created_at %></td>
-            <td><%= s.user.nick %></td>
+            <tr>
+              <td><%= s.theme.theme_name %></td>
+              <td><%= s.created_at %></td>
+              <td><%= s.user.nick %></td>
+            </tr>
           <% end %>
-        </tr>
       </tbody>
 
     </table>

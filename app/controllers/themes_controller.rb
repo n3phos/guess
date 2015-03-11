@@ -2,7 +2,15 @@ class ThemesController < ApplicationController
 
   def new
 
+    if(current_user.nil?)
+      flash[:error] = "Please choose a nickname to make a new submission"
+      flash[:redir_url] = request.original_url
+      redirect_to :home
+    end
+
     @theme = Theme.new
+    @theme.start_seconds = 0
+    @theme.end_seconds = 0
     3.times{ @theme.questions.build }
     @submissions = Submission.order('created_at DESC')
 
@@ -23,11 +31,10 @@ class ThemesController < ApplicationController
 
     @theme.questions.build(params[:theme][:questions])
 
+
     Submission.create({ :user_id => current_user.id,:theme_id => @theme.id })
 
-    redirect_to 'new'
-
-
+    redirect_to '/themes/new'
 
   end
 
