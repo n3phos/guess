@@ -20,6 +20,21 @@ class RoomsController < ApplicationController
   end
 
   def join
+
+    ret = current_user
+
+    puts "ret #{ret.class}" if ret.nil?
+
+    if(ret.nil?)
+      puts "inside error"
+      flash[:error] = "Can't join room, please choose a nickname"
+      flash[:redir_url] = request.original_url
+      redirect_to :home
+      return
+    end
+
+    puts current_user.inspect
+
     @room = Room.find(params[:name])
 
     #if !@room

@@ -1,8 +1,11 @@
 
-<h1> Rooms view </h1>
+<h1> Rooms </h1>
 
-<div>
+<p> Lobby is the only available room at the moment <p>
 
+<div class="row">
+
+  <div class="col-md-2">
   <table class="table">
     <thead>
       <tr>
@@ -14,11 +17,13 @@
       <tr>
       <% @rooms.each do |r| %>
         <td> <%= r.name %> </td>
-        <td> </td>
+        <td> <%= link_to "Join", join_room_path(r.name), class: "btn btn-success" %></td>
       <% end %>
       </tr>
     </tbody>
   </table>
+
+</div>
 
 </div>
 

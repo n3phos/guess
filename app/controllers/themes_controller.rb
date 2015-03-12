@@ -6,6 +6,7 @@ class ThemesController < ApplicationController
       flash[:error] = "Please choose a nickname to make a new submission"
       flash[:redir_url] = request.original_url
       redirect_to :home
+      return
     end
 
     @theme = Theme.new
