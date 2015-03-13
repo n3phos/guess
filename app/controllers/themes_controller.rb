@@ -64,7 +64,7 @@ class ThemesController < ApplicationController
   private
 
   def theme_params
-    params.require(:theme).permit(:video_id, :media_name, :category_id, :theme_name, :theme_interpret, :start_seconds, :end_seconds, :questions_attributes => [ :ques, :answer ] )
+    params.require(:theme).permit(:video_id, :media_name, :media_image, :disabled, :category_id, :theme_name, :theme_interpret, :start_seconds, :end_seconds, :questions_attributes => [ :ques, :answer ] )
   end
 
   def question_params

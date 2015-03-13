@@ -80,7 +80,7 @@ ActiveRecord::Schema.define(version: 20150310143430) do
     t.string   "media_image_content_type"
     t.integer  "media_image_file_size"
     t.datetime "media_image_updated_at"
-    t.integer  "category_id",              limit: 255
+    t.integer  "category_id"
     t.boolean  "disabled",                             default: false
   end
 

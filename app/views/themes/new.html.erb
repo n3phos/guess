@@ -62,16 +62,19 @@
         <%= f.label :end_seconds %>
         <%= f.text_field :end_seconds ,class: "form-control" %>
 
-        <%-# f.file_field :media_image, class: "btn btn-primary" %>
+        <%= f.file_field :media_image  %>
 
+        <% if false %>
         <div style="position:relative; margin-bottom: 10px; margin-top: 10px;">
                 <a class='btn btn-primary' href='javascript:;'>
                     Choose Image...
-                    <input type="file" style='position:absolute;z-index:2;top:0;left:0;filter: alpha(opacity=0);-ms-filter:"progid:DXImageTransform.Microsoft.Alpha(Opacity=0)";opacity:0;background-color:transparent;color:transparent;' name="file_source" size="40"  onchange='$("#upload-file-info").html($(this).val());'>
+                    <input type="file" id="theme_media_image" style='position:absolute;z-index:2;top:0;left:0;filter: alpha(opacity=0);-ms-filter:"progid:DXImageTransform.Microsoft.Alpha(Opacity=0)";opacity:0;background-color:transparent;color:transparent;' name="theme[media_image]" size="40"  onchange='$("#upload-file-info").html($(this).val());'>
                 </a>
                 &nbsp;
                 <span class='label label-info' id="upload-file-info"></span>
         </div>
+
+        <% end %>
         <%= f.submit "Submit Theme" , class: "btn btn-primary" %>
 
       </div>
