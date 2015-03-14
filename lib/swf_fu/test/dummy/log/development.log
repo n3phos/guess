@@ -1,0 +1,68 @@
+Connecting to database specified by database.yml
+Connecting to database specified by database.yml
+
+
+Started GET "/" for 127.0.0.1 at 2012-08-04 22:03:48 -0400
+Connecting to database specified by database.yml
+Processing by ApplicationController#example as HTML
+  Rendered application/example.html.erb within layouts/application (38.5ms)
+Compiled application.css  (0ms)  (pid 31556)
+Compiled jquery.js  (2ms)  (pid 31556)
+Compiled jquery_ujs.js  (0ms)  (pid 31556)
+Compiled example.js  (150ms)  (pid 31556)
+Compiled swfobject.js  (1ms)  (pid 31556)
+Compiled swf_fu.js  (182ms)  (pid 31556)
+Compiled application.js  (390ms)  (pid 31556)
+Completed 200 OK in 501ms (Views: 500.2ms | ActiveRecord: 0.0ms)
+
+
+Started GET "/assets/jquery_ujs.js?body=1" for 127.0.0.1 at 2012-08-04 22:03:49 -0400
+Served asset /jquery_ujs.js - 200 OK (57ms)
+
+
+Started GET "/assets/jquery.js?body=1" for 127.0.0.1 at 2012-08-04 22:03:49 -0400
+Served asset /jquery.js - 200 OK (16ms)
+
+
+Started GET "/assets/example.js?body=1" for 127.0.0.1 at 2012-08-04 22:03:49 -0400
+Served asset /example.js - 200 OK (2ms)
+
+
+Started GET "/assets/swfobject.js?body=1" for 127.0.0.1 at 2012-08-04 22:03:49 -0400
+Served asset /swfobject.js - 200 OK (3ms)
+
+
+Started GET "/assets/swf_fu.js?body=1" for 127.0.0.1 at 2012-08-04 22:03:49 -0400
+Served asset /swf_fu.js - 200 OK (6ms)
+
+
+Started GET "/swfs/example.swf" for 127.0.0.1 at 2012-08-04 22:03:51 -0400
+
+ActionController::RoutingError (No route matches [GET] "/swfs/example.swf"):
+  actionpack (3.2.6) lib/action_dispatch/middleware/debug_exceptions.rb:21:in `call'
+  actionpack (3.2.6) lib/action_dispatch/middleware/show_exceptions.rb:56:in `call'
+  railties (3.2.6) lib/rails/rack/logger.rb:26:in `call_app'
+  railties (3.2.6) lib/rails/rack/logger.rb:16:in `call'
+  actionpack (3.2.6) lib/action_dispatch/middleware/request_id.rb:22:in `call'
+  rack (1.4.1) lib/rack/methodoverride.rb:21:in `call'
+  rack (1.4.1) lib/rack/runtime.rb:17:in `call'
+  activesupport (3.2.6) lib/active_support/cache/strategy/local_cache.rb:72:in `call'
+  rack (1.4.1) lib/rack/lock.rb:15:in `call'
+  actionpack (3.2.6) lib/action_dispatch/middleware/static.rb:62:in `call'
+  railties (3.2.6) lib/rails/engine.rb:479:in `call'
+  railties (3.2.6) lib/rails/application.rb:220:in `call'
+  rack (1.4.1) lib/rack/content_length.rb:14:in `call'
+  railties (3.2.6) lib/rails/rack/log_tailer.rb:17:in `call'
+  rack (1.4.1) lib/rack/handler/webrick.rb:59:in `service'
+  /Users/work/.rvm/rubies/ruby-1.9.3-p194/lib/ruby/1.9.1/webrick/httpserver.rb:138:in `service'
+  /Users/work/.rvm/rubies/ruby-1.9.3-p194/lib/ruby/1.9.1/webrick/httpserver.rb:94:in `run'
+  /Users/work/.rvm/rubies/ruby-1.9.3-p194/lib/ruby/1.9.1/webrick/server.rb:191:in `block in start_thread'
+
+
+  Rendered /Users/work/.rvm/gems/ruby-1.9.3-p194/gems/actionpack-3.2.6/lib/action_dispatch/middleware/templates/rescues/routing_error.erb within rescues/layout (1.0ms)
+Connecting to database specified by database.yml
+  [1m[36m (0.2ms)[0m  [1mselect sqlite_version(*)[0m
+  [1m[35m (1.5ms)[0m  CREATE TABLE "schema_migrations" ("version" varchar(255) NOT NULL) 
+  [1m[36m (0.0ms)[0m  [1mPRAGMA index_list("schema_migrations")[0m
+  [1m[35m (1.1ms)[0m  CREATE UNIQUE INDEX "unique_schema_migrations" ON "schema_migrations" ("version")
+  [1m[36m (0.1ms)[0m  [1mSELECT "schema_migrations"."version" FROM "schema_migrations" [0m

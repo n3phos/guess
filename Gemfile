@@ -10,6 +10,10 @@ gem 'pg'
 
 gem 'puma'
 
+gem 'swf_fu', "~> 1.0.0", :path => 'lib/swf_fu'
+
+#gem 'swf-guess', '~> 1.0.0'
+
 gem 'rails_12factor'
 # Use SCSS for stylesheets
 gem 'sass-rails', '~> 4.0.3'
@@ -34,7 +38,7 @@ gem 'spring',        group: :development
 
 gem 'bootstrap-sass', '~> 3.3.1'
 
-gem "swf_fu", "~> 2.0"
+#gem "swf_fu", "~> 2.0"
 
 gem "paperclip", "~> 4.2"
 

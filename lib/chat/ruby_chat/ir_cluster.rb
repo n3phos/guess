@@ -41,7 +41,7 @@ module RubyChat
 
       puts Dir.pwd
 
-      pid = Process.spawn("ruby lib/ruby_chat/ipc_server.rb")
+      pid = Process.spawn("ruby lib/chat/ruby_chat/ipc_server.rb")
 
       if pid
         spawned = true
