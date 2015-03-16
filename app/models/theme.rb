@@ -20,24 +20,28 @@ class Theme < ActiveRecord::Base
   def generate_record
     record = {
       "video_id" => video_id,
-      "entries" => [
-        {
-          "q" => "#{category.name}",
-          "a" => media_name
-        }
-      ]
+      "entries" => []
     }
+
+    first_q = { "q" => "#{category.name}", "a" => media_name }
+
+    qs_pool = []
 
     qs = questions.order("RANDOM()").limit(3)
 
-    record["entries"] << { "q" => "Theme", "a" => theme_name } unless theme_name.empty?
-    record["entries"] << { "q" => "Interpret", "a" => theme_interpret } unless theme_interpret.empty?
+    qs_pool << { "q" => "Theme", "a" => theme_name } unless theme_name.empty?
+    qs_pool << { "q" => "Interpret", "a" => theme_interpret } unless theme_interpret.empty?
 
     if(!qs.empty?)
       qs.each do |q|
-        record["entries"] << { "q" => q.ques, "a" => q.answer }
+        qs_pool << { "q" => q.ques, "a" => q.answer }
       end
     end
+
+    qs_pool = qs_pool.shuffle
+    qs_pool.insert(0, first_q)
+
+    record["entries"] = qs_pool
 
     record
   end

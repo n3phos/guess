@@ -139,7 +139,7 @@
       <tbody>
           <% @submissions.each do |s| %>
             <tr>
-              <td><%= s.theme.theme_name %></td>
+              <td><%= s.theme.theme_name unless s.theme.nil? %></td>
               <td><%= s.created_at %></td>
               <td><%= s.user.nick %></td>
             </tr>

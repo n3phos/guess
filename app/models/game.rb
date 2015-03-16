@@ -34,12 +34,11 @@ class Game < ActiveRecord::Base
   def generate_wordlist
     wordlist = []
 
-    themes.each do |t|
-      wordlist << t.generate_record
+    gamerecords.order("id ASC").each do |r|
+      wordlist << r.theme.generate_record
     end
 
     wordlist
-
   end
 
   def current
@@ -55,9 +54,11 @@ class Game < ActiveRecord::Base
   end
 
   def mark_active
-    puts "in mark active"
-    first = gamerecords.first
+    first = gamerecords.order("id ASC").first
     first.update(:active => true)
+
+    puts "mark_active first record: #{first.inspect}"
+
     first.theme
   end
 

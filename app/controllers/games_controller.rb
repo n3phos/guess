@@ -127,11 +127,17 @@ class GamesController < ApplicationController
       cat_ids << cat.id
     end
 
-    puts cat_ids.inspect
-
     themes = Theme.where(category_id: cat_ids).where(disabled: false).shuffle
 
-    Gamerecord.build_records(@game, themes)
+    #Gamerecord.build_records(@game, themes)
+
+    theme_records = []
+    themes.each_with_index do |t, i|
+      theme_records << { :theme_id => t.id, :active => false }
+    end
+
+    puts "theme_records: #{theme_records.inspect}"
+    @game.gamerecords.create(theme_records)
 
     @theme = @game.mark_active
 

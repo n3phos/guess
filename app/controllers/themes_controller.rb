@@ -25,13 +25,14 @@ class ThemesController < ApplicationController
 
   def create
 
+    puts "theme_params: #{theme_params.inspect}"
+
     @theme = Theme.new(theme_params)
     @theme.media_image = params[:theme][:media_image]
     @theme.disabled = true
     @theme.save
 
-    @theme.questions.build(params[:theme][:questions])
-
+    #@theme.questions.create(question_params)
 
     Submission.create({ :user_id => current_user.id,:theme_id => @theme.id })
 
@@ -64,11 +65,30 @@ class ThemesController < ApplicationController
   private
 
   def theme_params
-    params.require(:theme).permit(:video_id, :media_name, :media_image, :disabled, :category_id, :theme_name, :theme_interpret, :start_seconds, :end_seconds, :questions_attributes => [ :ques, :answer ] )
+    all_params = params.require(:theme).permit(:video_id, :media_name, :media_image, :disabled, :category_id, :theme_name, :theme_interpret, :start_seconds, :end_seconds, :questions_attributes => [ :ques, :answer ] )
+    filter_questions(all_params)
   end
 
-  def question_params
-    params.require(:theme_questions).permit(:ques, :answer)
+  def filter_questions(par)
+    if(par[:questions_attributes])
+      questions = {}
+      attributes = par[:questions_attributes]
+
+      attributes.each do |a|
+        q = a[1]
+        if(!q["ques"].blank? && !q["answer"].blank?)
+          questions["#{a[0]}"] = a[1]
+        end
+      end
+
+      if(questions.empty?)
+        par.delete(:questions_attributes)
+      else
+        par[:questions_attributes] = questions
+      end
+    end
+
+    return par
   end
 
 end
