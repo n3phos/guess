@@ -1,4 +1,3 @@
-require 'uri'
 
 class UsersController < ApplicationController
 
@@ -18,6 +17,21 @@ class UsersController < ApplicationController
       else
         redirect_to '/rooms/lobby'
       end
+    else
+      flash[:error] = @user.errors.first[1]
+      render 'new'
+    end
+  end
+
+  def update
+    if(current_user.update_attributes(user_params))
+    redirect_to '/rooms/lobby'
+    else
+      flash[:error] = current_user.errors.first[1]
+
+      @current_user = User.find(current_user.id)
+
+      render 'new'
     end
   end
 

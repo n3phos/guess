@@ -1,7 +1,7 @@
 <div class="col-md-5 chat-container" >
 
   <% content_for :chat do %>
-    <%= swf_tag("chat.swf", :width => 0, :height => 0, :id => "my_flash", :div_id => "flashDiv", :parameters => { :allowScriptAccess => "always", :scale => "noScale"}, :callback => "load_callback") %>
+    <%= swf_tag("chat.swf", :width => 0, :height => 0, :id => "my_flash", :alt => "", :div_id => "flashDiv", :parameters => { :allowScriptAccess => "always", :scale => "noScale"}, :callback => "load_callback") %>
   <% end %>
 
   <div id="flashDiv"></div>
@@ -14,7 +14,7 @@
         </div>
       </div>
       <div class="row room-controls">
-        <%= button_to "leave", '/home' , :class => "btn btn-primary", :method => :get  %>
+        <%= button_to "leave","javascript:chat.leave('chatcontrols')" , :class => "btn btn-primary" %>
       </div>
     </div>
 

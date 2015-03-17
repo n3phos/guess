@@ -1,7 +1,10 @@
 Rails.application.routes.draw do
 
 
-  get 'static_pages/contribute', as: :contribute
+
+  root 'users#new'
+
+  get '/contribute', to: 'static_pages#contribute', as: :contribute
 
   get '/home', to: 'users#new', as: :home
 

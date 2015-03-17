@@ -65,13 +65,13 @@ class Room
     left = false
 
     irc_nick = user.irc_nick.to_sym
+    left = users.delete(irc_nick)
 
-    left = users.delete(irc_nick) do |k,v|
-      k == irc_nick
+    if(left)
+      puts "user #{irc_nick} left"
     end
 
     left
-
   end
 
   def to_json(current_user)

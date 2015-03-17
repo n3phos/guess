@@ -1,13 +1,22 @@
 
 <header class="navbar ">
   <div >
-    <nav>
-      <ul class="nav navbar-nav ">
+    <nav class="navbar navbar-default">
+      <ul class="nav navbar-nav navbar-left ">
         <li><%= link_to "home", :home %></li>
         <li><%= link_to "rooms", :rooms %></li>
         <li><%= link_to "themes", :themes %></li>
         <li><%= link_to "contribute", :contribute %></li>
       </ul>
+
+      <div style="padding-right: 15px;">
+      <p class="navbar-text navbar-right">
+      <% if(!current_user.nil?) %>
+          <%= "nickname: " %>
+          <%= link_to "#{current_user.nick}", '#', style: "margin-right: 15px;" %>
+      <% end %>
+      </p>
+      </div>
     </nav>
   </div>
 </header>

@@ -45,15 +45,15 @@ class RoomsController < ApplicationController
   end
 
   def leave
-
     @room = Room.find(params[:name])
 
     @room.leave(current_user)
 
-    respond_to do |format|
-      format.json { render :json => "left:true" }
+    if(params[:origin] == "chatcontrols")
+      @redir_to_rooms = root_url + "rooms"
+    else
+      @redir_to_tooms = false
     end
-
     #destroy(@room)
   end
 

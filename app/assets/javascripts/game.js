@@ -434,7 +434,7 @@ GameClient.prototype.print_hint = function(hint) {
 
   //hint.replace(/\*/, '<span
 
-    this.chat.append("hint: " + new_hint);
+    this.chat.append("Apollo: hint ~ " + new_hint);
 }
 
 GameClient.prototype.handle_event = function(event_msg) {

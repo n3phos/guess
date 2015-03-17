@@ -64,8 +64,9 @@ WebChat.prototype.on_welcome = function() {
   seconds = seconds / 1000;
 
   //$('#chat-loader').hide();
+  //"Welcome to the chat, it took " + seconds + " seconds to init chat"
 
-  welcome_user("Welcome to the chat, it took " + seconds + " seconds to init chat");
+  welcome_user("Welcome to the chat!");
 
   //var game = $('#start-game');
   //game.submit();
@@ -128,7 +129,7 @@ WebChat.prototype.init = function()
     }
   });
 
-
+  $(document).on("page:before-change", chat.leave);
 
 }
 
@@ -199,10 +200,34 @@ WebChat.prototype.connect = function() {
 
 }
 
-WebChat.prototype.leave = function() {
+WebChat.prototype.leave = function(ori) {
 
-  irc_leave();
+  if(ori == "chatcontrols") {
 
+  } else {
+    ori = "";
+  }
+
+  $(document).off("page:before-change");
+
+  var curl = $(location).attr('href');
+
+  $.ajax({
+    url: curl + "/leave",
+    type: "GET",
+    data: { origin: ori}
+  });
+
+}
+
+WebChat.prototype.quit = function() {
+
+  irc_quit();
+
+}
+
+WebChat.prototype.remove_user = function(user) {
+  delete this._users[user];
 }
 
 
@@ -220,20 +245,6 @@ $(function() {
   });
 });
 
-window.onbeforeunload = function () {
-
-  var curl = $(location).attr('href');
-
-  chat.leave();
-
-  $.ajax({
-    url: curl + "/leave",
-    type: "GET",
-    async: false,
-    dataType: "json"
-  });
-
-}
 
 		function flash() {
 			return document.getElementById("my_flash");
@@ -263,7 +274,7 @@ window.onbeforeunload = function () {
 		irc_user("guest",0,"mrnobody24");
 		}
 
-  function irc_leave() {
+  function irc_quit() {
     var cmd = "QUIT";
     send_cmd(cmd);
   }
@@ -351,6 +362,7 @@ WebChat.prototype.irc_msg = function(msg, target)
     }
   }
 
+
   function update_users()
   {
 
@@ -382,9 +394,9 @@ WebChat.prototype.irc_msg = function(msg, target)
   function on_user_left(msg)
   {
 
-    event_message = chat.user(msg.from) + " has left the room";
+    //event_message = chat.user(msg.from) + " has left the room";
 
-    update_users();
+    chat.remove_user(msg.from);
 
     render_new_users();
 

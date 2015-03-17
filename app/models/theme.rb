@@ -18,7 +18,7 @@ class Theme < ActiveRecord::Base
 
   validate :video_id_is_youtube_link, :on => :create
 
-  before_save :scan_video_id, :on => :create
+  before_save :scan_video_id
 
 
   def video_id_is_youtube_link
@@ -32,8 +32,10 @@ class Theme < ActiveRecord::Base
   end
 
   def scan_video_id
-    url, id = video_id.split("?v=")
-    self.video_id = id
+    if(video_id.match(/(youtube\.com\/watch)/))
+      url, id = video_id.split("?v=")
+      self.video_id = id
+    end
   end
 
   def generate_record

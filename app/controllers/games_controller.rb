@@ -24,7 +24,7 @@ class GamesController < ApplicationController
       last_play = Time.parse(last_play)
       diff = time - last_play
       puts "time: #{time}, last_play #{last_play.to_s}, diff #{diff}"
-      diff += 1
+      diff += 0.5
 
       @theme.start_seconds = 0 unless !@theme.start_seconds.nil?
       @theme.start_seconds += diff

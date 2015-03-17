@@ -154,12 +154,16 @@ textarea {
 
 }
 
+object {
+  display: none;
+}
+
 .list-users {
-  list-style-type: none;
-  padding: 0;
+  list-style-image: url('bullet2.gif');
+  padding-left: 15px;
 
   li {
-    margin-top: 2px;
+    margin-top: 0px;
   }
 }
 

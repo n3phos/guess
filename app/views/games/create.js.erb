@@ -6,8 +6,8 @@
 $('#game-wrapper').trigger("initialize", { "game_id": "<%= @game.id %>",
                           "record_player_img": "/system/themes/media_images/000/000/016/medium/nice_gif.gif",
                           "record": {"video_id": "<%= @theme.video_id %>",
-                                      "startSeconds": "<%= @theme.start_seconds.to_f %>",
-                                      "endSeconds": "<%= @theme.end_seconds.to_f %>",
+                                      "start_seconds": "<%= @theme.start_seconds.to_f %>",
+                                      "end_seconds": "<%= @theme.end_seconds.to_f %>",
                                       "img_url":" <%= @theme.media_image.url(:medium) %>" } });
 
 <% if(@game.finished) %>

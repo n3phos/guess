@@ -17,7 +17,7 @@
       <tr>
       <% @rooms.each do |r| %>
         <td> <%= r.name %> </td>
-        <td> <%= link_to "Join", join_room_path(r.name), class: "btn btn-success" %></td>
+        <td> <%= link_to "Join", join_room_path(r.name), class: "btn btn-success", :method => :get %></td>
       <% end %>
       </tr>
     </tbody>
