@@ -41,6 +41,8 @@
   <div class="row" style="margin-top: 31px;">
     <div class="col-md-6">
 
+      <%= render :partial => 'shared/error_messages' %>
+
         <%= f.label :video_id %>
         <%= f.text_field :video_id, class: "form-control" %>
 
@@ -123,7 +125,7 @@
   <div class="pending">
 
     <div class="row">
-      <div class="col-md-6">
+      <div class="col-md-7">
 
     <h3> Pending Submissions </h3>
 
@@ -131,6 +133,7 @@
 
       <thead>
         <tr>
+          <th> youtube </th>
           <th> Theme name </th>
           <th> Submitted on </th>
           <th> Submitted by </th>
@@ -139,6 +142,7 @@
       <tbody>
           <% @submissions.each do |s| %>
             <tr>
+              <td><%= link_to "youtube link", "https://youtube.com/watch?v=#{s.theme.video_id}" %> </td>
               <td><%= s.theme.theme_name unless s.theme.nil? %></td>
               <td><%= s.created_at %></td>
               <td><%= s.user.nick %></td>

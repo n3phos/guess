@@ -437,15 +437,16 @@ GameClient.prototype.print_hint = function(hint) {
     this.chat.append("hint: " + new_hint);
 }
 
-GameClient.prototype.handle_event = function(msg) {
+GameClient.prototype.handle_event = function(event_msg) {
 
-  var event = msg.text;
+  var event = event_msg.text.match(/([^\s]+)/)[0];
+  var msg = event_msg.text;
 
-  if(msg.from == this.chat.room_op()) {
+  if(event_msg.from == this.chat.room_op()) {
 
     if(event.match(/next/)) {
       if(event.match(/next_stage/)) {
-        var delay = event.match(/[0-9]+/);
+        var delay = msg.match(/[0-9]+/);
         if(delay) {
           delay = parseInt(delay);
         }
@@ -457,7 +458,7 @@ GameClient.prototype.handle_event = function(msg) {
     }
 
     if(event.match(/hint/)) {
-      var hint = event.split(":");
+      var hint = msg.split(":");
       this.print_hint(hint[1]);
       return;
     }
@@ -481,7 +482,7 @@ GameClient.prototype.handle_event = function(msg) {
     }
 
     if(event.match(/match/)) {
-      var info = event.split(":");
+      var info = msg.split(":");
 
       var question = info[1];
       var answer = info[2];
@@ -513,7 +514,7 @@ GameClient.prototype.handle_event = function(msg) {
     }
 
     if(event.match(/new_game/)) {
-      var game_id = event.split(" ")[1];
+      var game_id = msg.split(" ")[1];
       this.load_new(game_id);
       return;
     }
@@ -581,7 +582,7 @@ GameClient.prototype.initialize = function(opts) {
 
   this.record_player_img = opts.record_player_img;
 
-  this.stages = [ this.resolve_media, this.resolve_theme_name, this.resolve_theme_name ];
+  this.stages = [ this.resolve_media, this.resolve_theme_name, this.resolve_theme_name, this.resolve_theme_name, this.resolve_theme_name, this.resolve_theme_name ];
 
   this.player = new Player(this);
 
@@ -668,8 +669,8 @@ GameClient.prototype.set_next_record = function(record) {
 
   this.next_theme = {
     "videoId": record.video_id,
-    "startSeconds": record.startSeconds,
-    "endSeconds": record.endSeconds,
+    "startSeconds": record.start_seconds,
+    "endSeconds": record.end_seconds,
     "suggestedQuality": "small"
   }
 

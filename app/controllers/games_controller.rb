@@ -136,7 +136,6 @@ class GamesController < ApplicationController
       theme_records << { :theme_id => t.id, :active => false }
     end
 
-    puts "theme_records: #{theme_records.inspect}"
     @game.gamerecords.create(theme_records)
 
     @theme = @game.mark_active

@@ -25,25 +25,31 @@ class ThemesController < ApplicationController
 
   def create
 
-    puts "theme_params: #{theme_params.inspect}"
+    if(params[:theme])
+      @theme = Theme.new(filter_questions(theme_params))
 
-    @theme = Theme.new(theme_params)
-    @theme.media_image = params[:theme][:media_image]
-    @theme.disabled = true
-    @theme.save
+      @theme.media_image = params[:theme][:media_image]
+      @theme.disabled = true
 
-    #@theme.questions.create(question_params)
+      if @theme.save
+        Submission.create({ :user_id => current_user.id,:theme_id => @theme.id })
 
-    Submission.create({ :user_id => current_user.id,:theme_id => @theme.id })
-
-    redirect_to '/themes/new'
+        redirect_to '/themes/new'
+      else
+        @submissions = Submission.order('created_at DESC')
+        #params[:theme][:questions_attributes] = @qa unless @qa.nil?
+        3.times{ @theme.questions.build }
+        render 'new'
+      end
+      #@theme.questions.create(question_params)
+    end
 
   end
 
   def index
 
-    @themes = Theme.all
-    @themes = Theme.paginate(:page => params[:page], :per_page => 10)
+    #@themes = Theme.all.where(disabled: false)
+    @themes = Theme.where(disabled: false).paginate(:page => params[:page], :per_page => 10)
 
 
   end
@@ -62,11 +68,17 @@ class ThemesController < ApplicationController
     redirect_to :action => "index"
   end
 
+  def destroy
+    @theme = Theme.find(params[:id])
+    @theme.destroy
+
+    redirect_to "/themes"
+  end
+
   private
 
   def theme_params
-    all_params = params.require(:theme).permit(:video_id, :media_name, :media_image, :disabled, :category_id, :theme_name, :theme_interpret, :start_seconds, :end_seconds, :questions_attributes => [ :ques, :answer ] )
-    filter_questions(all_params)
+    params.require(:theme).permit(:video_id, :media_name, :media_image, :disabled, :category_id, :theme_name, :theme_interpret, :start_seconds, :end_seconds, :questions_attributes => [ :ques, :answer ] ).dup
   end
 
   def filter_questions(par)
@@ -81,11 +93,7 @@ class ThemesController < ApplicationController
         end
       end
 
-      if(questions.empty?)
-        par.delete(:questions_attributes)
-      else
-        par[:questions_attributes] = questions
-      end
+      par[:questions_attributes] = questions
     end
 
     return par

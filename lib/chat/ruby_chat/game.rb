@@ -375,10 +375,6 @@ class Game
 
 
   def on_record_match(user)
-
-    puts "guess matches current record"
-
-
     if more_entries?
       next_stage(user)
     else

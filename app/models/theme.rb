@@ -16,6 +16,25 @@ class Theme < ActiveRecord::Base
 
   accepts_nested_attributes_for :questions
 
+  validate :video_id_is_youtube_link, :on => :create
+
+  before_save :scan_video_id, :on => :create
+
+
+  def video_id_is_youtube_link
+    url, id = self.video_id.split("?v=")
+
+
+    if(url.nil? || !url.match(/(youtube\.com\/watch)/))
+      errors.add(:video, "has to be a valid youtube link")
+    end
+
+  end
+
+  def scan_video_id
+    url, id = video_id.split("?v=")
+    self.video_id = id
+  end
 
   def generate_record
     record = {
