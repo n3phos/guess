@@ -20,7 +20,6 @@ class Theme < ActiveRecord::Base
 
   before_save :scan_video_id
 
-
   def video_id_is_youtube_link
     url, id = self.video_id.split("?v=")
 
@@ -48,7 +47,7 @@ class Theme < ActiveRecord::Base
 
     qs_pool = []
 
-    qs = questions.order("RANDOM()").limit(3)
+    qs = questions.where(reviewed: true).order("RANDOM()").limit(3)
 
     qs_pool << { "q" => "Theme", "a" => theme_name } unless theme_name.empty?
     qs_pool << { "q" => "Interpret", "a" => theme_interpret } unless theme_interpret.empty?

@@ -1,12 +1,7 @@
 
 <div>
 
-  <h3> Edit View </h3>
-
-  <p> Theme name </p>
-  <p> <%= @theme.theme_name %> </p>
-
-
+  <% if false %>
   <div class="col-md-12">
 
     <div class="row">
@@ -53,5 +48,99 @@
   </div>
   </div>
 </div>
+<% else %>
+
+      <div class="panel panel-default" style="inline-block">
+        <div class="panel-heading">
+          <% if(@theme.theme_name.blank?) %>
+            <%= @theme.media_name %>
+          <% else %>
+            <%= @theme.theme_name %>
+          <% end %>
+          </div>
+        <div class="panel-body">
+          <div class="row">
+            <div class="col-md-5">
+            <%= image_tag @theme.media_image.url(:medium) %>
+            <table style="margin-top: 15px;">
+              <tbody>
+                  <tr>
+                    <th style="padding-right: 15px;"> Media name </th>
+                      <td><%= @theme.media_name %></td>
+                  </tr>
+                  <tr>
+                  <th style="padding-right: 15px;"> Theme name </th>
+                    <td><%= @theme.theme_name %></td>
+                  </tr>
+                  <tr>
+                  <th style="padding-right: 15px;"> Category </th>
+                    <td><%= @theme.category.name %></td>
+                  </tr>
+                  <tr>
+                  <th style="padding-right: 15px;"> Interpret </th>
+                    <td><%= @theme.theme_interpret %></td>
+                  </tr>
+            </tbody>
+          </table>
+        </div>
+            <div class="col-md-6">
+              <div class="panel panel-default">
+                <div class="panel-heading">
+                  Questions <span class="badge"> <%= @theme.questions.count %> </span>
+                </div>
+                <div class="panel-body">
+                  <% if(flash[:success]) %>
+                    <div class="alert alert-success"><%= flash[:success] %></div>
+                  <% end %>
+                  <%= form_for(@theme) do |f| %>
+                    <%= f.fields_for :questions, @new_questions do |f_ques| %>
+
+
+                      <div class="form-inline">
+                        <div class="col-md-3">
+                          <%= f_ques.label :ques, 'Question'  %>
+                        </div>
+                        <div class="col-md-9">
+                          <%= f_ques.text_field :ques, class: "form-control" %>
+                        </div>
+                      </div>
+
+                      <div class="form-inline">
+
+                        <div class="col-md-3">
+                          <%= f_ques.label :answer %>
+                        </div>
+
+                        <div class="col-md-9">
+                          <%= f_ques.text_field :answer, class: "form-control form-answer" %>
+                        </div>
+                      </div>
+
+                    <% end %>
+
+                    <div class="">
+                      <%= f.submit "Submit Questions", class: "btn btn-primary" %>
+                    </div>
+                  <% end %>
+                    <table class="table" style="margin-top: 15px;">
+                      <tbody>
+                      <% @theme.questions.each do |q| %>
+                        <% if(q.persisted?) %>
+                          <tr>
+                            <td> q: <%= q.ques %> <br> a: <%= q.answer %> </td>
+                          </tr>
+                        <% end %>
+                    <% end %>
+                    </tbody>
+                  </table>
+                </div>
+            </div>
+        </div>
+
+          </div>
+        </div>
+      </div>
+
+<% end %>
 
 </div>

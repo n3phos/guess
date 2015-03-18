@@ -11,7 +11,8 @@
     <div class="panel-heading">
       <h5> There are currently <span class="badge"> <%= Theme.count %> </span> themes with a total of <span class="badge"> <%= Question.count %> </span> quizz questions in the Database </h5>
   </div>
-  <div class="panel-body">     <%= link_to "New Submission", :new_theme, :class => "btn btn-success"  %><span style="margin-left: 10px;">click here to make a new submission </span></div>
+  <div class="panel-body">     <%= link_to "New Submission", :new_theme, :class => "btn btn-success"  %><span style="margin-left: 10px;">click here to make a new submission, 
+  you can also add quizz question to existing themes by clicking <b>view/edit</b> </span></div>
     <table class="table table-striped">
       <thead>
         <tr>
@@ -21,7 +22,7 @@
           <th>Interpret</th>
           <th>Category</th>
           <th>youtube</th>
-          <th>edit</th>
+          <th>view</th>
         </tr>
       </thead>
       <tbody>
@@ -33,7 +34,7 @@
           <td><%= t.theme_interpret %></td>
           <td><%= t.category.name %></td>
           <td><%= link_to "youtube link", "https://www.youtube.com/watch?v=#{t.video_id}" unless t.nil? %></td>
-          <td><%= link_to "edit", edit_theme_path(t.id) %></td>
+          <td><%= link_to "view/edit", edit_theme_path(t.id) %></td>
         </tr>
       <% end %>
       </tbody>

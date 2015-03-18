@@ -33,7 +33,7 @@ var load_callback = function (e) {
   },e);
 
 
-};
+}
 
 function swfLoadEvent(fn, e) {
   if(typeof fn !== "function") { return false; }

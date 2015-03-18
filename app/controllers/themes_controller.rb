@@ -57,15 +57,23 @@ class ThemesController < ApplicationController
   def edit
 
     @theme = Theme.find(params[:id])
+    @new_questions = []
+    3.times{ @new_questions << @theme.questions.build }
 
   end
 
   def update
     @theme = Theme.find(params[:id])
 
-    @theme.update_attributes(theme_params)
+    qs = filter_questions(theme_question_params)
 
-    redirect_to :action => "index"
+    if(@theme.update_attributes(qs))
+      flash[:success] = "Thanks for your submission, questions will be reviewed"
+      redirect_to :action => "edit"
+    else
+      redirect_to :action => "edit"
+    end
+
   end
 
   def destroy
@@ -79,6 +87,10 @@ class ThemesController < ApplicationController
 
   def theme_params
     params.require(:theme).permit(:video_id, :media_name, :media_image, :disabled, :category_id, :theme_name, :theme_interpret, :start_seconds, :end_seconds, :questions_attributes => [ :ques, :answer ] ).dup
+  end
+
+  def theme_question_params
+    params.require(:theme).permit(:questions_attributes => [:ques, :answer])
   end
 
   def filter_questions(par)
