@@ -7,6 +7,8 @@ class GamesController < ApplicationController
 
     @room = Room.find(params[:name])
 
+    puts "in show, room name: #{@room.name}, room active game: #{@room.active_game}"
+
     @game = Game.find(@room.active_game)
 
     if @game.started
