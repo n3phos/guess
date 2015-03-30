@@ -193,7 +193,7 @@ WebChat.prototype.user = function(irc_nick) {
 
 WebChat.prototype.connect = function() {
 
-  var host = "128.199.35.15";
+  var host = "188.166.60.25";
   var port = 6667;
 
   this.connection.connect(host, port);

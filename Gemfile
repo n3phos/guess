@@ -8,11 +8,11 @@ gem 'sqlite3', group: :development
 
 gem 'pg'
 
-gem 'puma'
+#gem 'puma'
+
+gem 'unicorn'
 
 gem 'swf_fu', "~> 1.0.0", :path => 'lib/swf_fu'
-
-#gem 'swf-guess', '~> 1.0.0'
 
 gem 'rails_12factor'
 # Use SCSS for stylesheets
@@ -47,6 +47,12 @@ gem 'rest-client'
 gem 'will_paginate', '~> 3.0.5'
 
 gem 'will_paginate-bootstrap'
+
+group :development, :test do
+  gem "rspec-rails", "~> 3.0"
+  gem 'capybara'
+  gem 'factory_girl'
+end
 
 # Use ActiveModel has_secure_password
 # gem 'bcrypt', '~> 3.1.7'

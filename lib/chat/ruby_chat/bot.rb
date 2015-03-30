@@ -25,7 +25,7 @@ module RubyChat
       #self.id = config['id']
       self.word_list = []
 
-      config.merge!({ 'host' => "128.199.35.15", 'port' => 6667 })
+      config.merge!({ 'host' => "irc.themeguess.com", 'port' => 6667 })
 
 
       chost       = config['host']
