@@ -1,5 +1,6 @@
 class User < ActiveRecord::Base
   after_initialize :init
+  after_create :init
 
   validates :nick, :uniqueness => {:message => "Nickname has already been taken"},
                    :format => {:with => /\A[a-z0-9\-_]+\z/,
