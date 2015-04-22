@@ -2,16 +2,12 @@
 
 class RoomsController < ApplicationController
   def new
-
-
   end
 
   def create
     @room = Room.new(IRC.handler)
-
     config = { 'channel' => params[:channel], 'nick' => params[:nick] }
     @room.create(config)
-
     render 'new'
   end
 
@@ -29,12 +25,14 @@ class RoomsController < ApplicationController
 
   def leave
     @room = Room.find(params[:name])
-    @room.leave(current_user)
+    if @room
+      @room.leave(current_user)
 
-    if(params[:origin] == "chatcontrols")
-      @redir_to_rooms = root_url + "rooms"
-    else
-      @redir_to_rooms = false
+      if(params[:origin] == "chatcontrols")
+        @redir_to_rooms = root_url + "rooms"
+      else
+        @redir_to_rooms = false
+      end
     end
   end
 

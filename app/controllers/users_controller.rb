@@ -25,7 +25,7 @@ class UsersController < ApplicationController
 
   def update
     if(current_user.update_attributes(user_params))
-    redirect_to '/rooms/lobby'
+      redirect_to '/rooms/lobby'
     else
       flash[:error] = current_user.errors.first[1]
 

@@ -1,7 +1,6 @@
 class ThemesController < ApplicationController
 
   def new
-
     if(current_user.nil?)
       flash[:error] = "Please choose a nickname to make a new submission"
       flash[:redir_url] = request.original_url
@@ -12,19 +11,16 @@ class ThemesController < ApplicationController
     @theme = Theme.new
     @theme.start_seconds = 0
     @theme.end_seconds = 0
+
     3.times{ @theme.questions.build }
     @submissions = Submission.order('created_at DESC')
-
   end
 
   def show
-
     @theme = Theme.find(params[:id])
-
   end
 
   def create
-
     if(params[:theme])
       @theme = Theme.new(filter_questions(theme_params))
 
@@ -33,33 +29,23 @@ class ThemesController < ApplicationController
 
       if @theme.save
         Submission.create({ :user_id => current_user.id,:theme_id => @theme.id })
-
         redirect_to '/themes/new'
       else
         @submissions = Submission.order('created_at DESC')
-        #params[:theme][:questions_attributes] = @qa unless @qa.nil?
         3.times{ @theme.questions.build }
         render 'new'
       end
-      #@theme.questions.create(question_params)
     end
-
   end
 
   def index
-
-    #@themes = Theme.all.where(disabled: false)
     @themes = Theme.where(disabled: false).paginate(:page => params[:page], :per_page => 10)
-
-
   end
 
   def edit
-
     @theme = Theme.find(params[:id])
     @new_questions = []
     3.times{ @new_questions << @theme.questions.build }
-
   end
 
   def update
@@ -73,7 +59,6 @@ class ThemesController < ApplicationController
     else
       redirect_to :action => "edit"
     end
-
   end
 
   def destroy
