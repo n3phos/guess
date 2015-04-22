@@ -26,9 +26,7 @@ var GameClient = function(chat) {
   this.finished = false;
   this.last_record = false;
   this.stage_reset = false;
-  this.is_loading = false;
   this.joining = false;
-  this.received_reset = false;
 
   // record
   this.next_theme = null;
@@ -62,7 +60,6 @@ GameClient.prototype.initialize = function(opts) {
   this.load_iframe_api();
 
   this.initialized = true;
-  this.is_loading = true;
 
   $('#record-player')[0].src = opts.record_player_img;
   $('#record-player').hide();
@@ -135,7 +132,6 @@ GameClient.prototype.play = function() {
     $('#status-text').css("visibility", "hidden");
 
     this.started = true;
-    this.is_loading = false;
     this.query();
 
   }
