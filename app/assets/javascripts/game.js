@@ -342,7 +342,7 @@ GameClient.prototype.show_media_img = function() {
 }
 
 GameClient.prototype.ready = function() {
-  this.chat.irc_msg("!ready");
+  this.chat.irc.msg("!ready");
 }
 
 GameClient.prototype.play = function() {
