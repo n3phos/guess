@@ -71,7 +71,8 @@ class ThemesController < ApplicationController
   private
 
   def theme_params
-    params.require(:theme).permit(:video_id, :media_name, :media_image, :disabled, :category_id, :theme_name, :theme_interpret, :start_seconds, :end_seconds, :questions_attributes => [ :ques, :answer ] ).dup
+    params.require(:theme).permit(:video_id, :media_name, :media_image, :disabled, :category_id, 
+                                  :theme_name, :theme_interpret, :start_seconds, :end_seconds, :questions_attributes => [ :ques, :answer ] )
   end
 
   def theme_question_params
@@ -80,20 +81,13 @@ class ThemesController < ApplicationController
 
   def filter_questions(par)
     if(par[:questions_attributes])
-      questions = {}
-      attributes = par[:questions_attributes]
-
-      attributes.each do |a|
-        q = a[1]
-        if(!q["ques"].blank? && !q["answer"].blank?)
-          questions["#{a[0]}"] = a[1]
-        end
+      par[:questions_attributes].delete_if do |k, v|
+        v['ques'].blank? || v['answer'].blank?
       end
 
-      par[:questions_attributes] = questions
-    end
+    par
 
-    return par
+    end
   end
 
 end

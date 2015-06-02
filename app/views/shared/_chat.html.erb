@@ -1,7 +1,13 @@
 <div class="col-md-5 chat-container" >
 
   <div style="position:absolute">
-  <%= swf_tag("chat.swf", :width => 0, :height => 0, :id => "my_flash", :alt => "", :div_id => "flashDiv", :parameters => { :allowScriptAccess => "always", :scale => "noScale"}, :callback => "load_callback") %>
+    <%= swf_tag("chat.swf", :width => 0, 
+                :height => 0,
+                :id => "my_flash",
+                :alt => "",
+                :div_id => "flashDiv",
+                :parameters => { :allowScriptAccess => "always", :scale => "noScale"},
+                :callback => "load_callback") %>
 
   <div id="flashDiv"></div>
 </div>

@@ -9,6 +9,14 @@ gem 'sqlite3', group: :development
 gem 'pg'
 
 #gem 'puma'
+#
+group :development do
+  gem 'capistrano'
+  gem 'capistrano-bundler'
+  gem 'capistrano3-unicorn'
+  gem 'capistrano-rails'
+  gem 'capistrano-rvm'
+end
 
 gem 'unicorn'
 
@@ -52,6 +60,10 @@ group :development, :test do
   gem "rspec-rails", "~> 3.0"
   gem 'capybara'
   gem 'factory_girl_rails'
+  gem 'chromedriver-helper'
+  gem 'selenium-webdriver'
+  gem 'database_cleaner'
+  gem 'shoulda-matchers'
 end
 
 # Use ActiveModel has_secure_password

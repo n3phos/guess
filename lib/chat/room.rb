@@ -79,7 +79,7 @@ class Room
     h = { "name" => name,
           "channel" => channel,
           "room_operator" => room_operator,
-          "users" => users,
+          "users" => "",
           "current_user" => { "name" => current_user.nick, "irc_nick" => current_user.irc_nick }
         }
 

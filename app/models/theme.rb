@@ -23,11 +23,9 @@ class Theme < ActiveRecord::Base
   def video_id_is_youtube_link
     url, id = self.video_id.split("?v=")
 
-
     if(url.nil? || !url.match(/(youtube\.com\/watch)/))
       errors.add(:video, "has to be a valid youtube link")
     end
-
   end
 
   def scan_video_id
@@ -47,7 +45,7 @@ class Theme < ActiveRecord::Base
 
     qs_pool = []
 
-    qs = questions.where(reviewed: true).order("RANDOM()").limit(3)
+    qs = questions.where(reviewed: true).limit(3)
 
     qs_pool << { "q" => "Theme", "a" => theme_name } unless theme_name.empty?
     qs_pool << { "q" => "Interpret", "a" => theme_interpret } unless theme_interpret.empty?
@@ -58,7 +56,7 @@ class Theme < ActiveRecord::Base
       end
     end
 
-    qs_pool = qs_pool.shuffle
+    qs_pool.shuffle!
     qs_pool.insert(0, first_q)
 
     record["entries"] = qs_pool

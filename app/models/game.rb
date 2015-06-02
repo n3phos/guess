@@ -3,11 +3,6 @@ class Game < ActiveRecord::Base
   has_many :gamerecords
   has_many :themes, through: :gamerecords
 
-  
-  def self.joining_theme
-    Theme.find_by(theme_name: "tristram_join")
-  end
-
   def self.dummy_theme
     Theme.find_by(theme_name: "dummy_theme")
   end

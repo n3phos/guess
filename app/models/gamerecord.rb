@@ -7,14 +7,6 @@ class Gamerecord < ActiveRecord::Base
 
   has_one :history
 
-  def self.build_records(game, themes)
-
-    themes.each do |t|
-      self.create :game_id => game.id, :theme_id => t.id, :active => false
-    end
-
-  end
-
   def create_history
     History.create :gamerecord_id => self.id
   end

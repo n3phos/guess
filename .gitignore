@@ -15,4 +15,7 @@
 /log/*.log
 /tmp
 
-*DS_Store*
+.DS_Store
+
+/config/deploy/
+/config/deploy.rb

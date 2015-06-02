@@ -1,5 +1,6 @@
 class GamesController < ApplicationController
 
+  # temp solution
   skip_before_filter :verify_authenticity_token, :only => [:update]
 
   def show
@@ -56,9 +57,11 @@ class GamesController < ApplicationController
 
   def new
     @room = Room.find(params[:name])
+    if @room
       respond_to do |format|
         format.js
       end
+    end
   end
 
   # fetch next record
@@ -104,7 +107,9 @@ class GamesController < ApplicationController
       @game = Game.create
 
       categories = []
-      categories = params[:categories].split(",") unless params[:categories].empty?
+      if !params[:categories].blank?
+        categories = params[:categories].split(",")
+      end
 
       # default category
       if categories.empty?
@@ -112,6 +117,8 @@ class GamesController < ApplicationController
       end
 
       categories = Category.where(name: categories).all
+
+      puts "categories: #{categories.inspect}"
 
       cat_ids = []
       categories.each do |cat|
@@ -163,7 +170,6 @@ class GamesController < ApplicationController
 
       if @game.started
         if started == "false"
-          @room = Room.find(params[:name])
           # deactivate the game
           @game.update(:finished => true)
         end

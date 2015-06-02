@@ -36,7 +36,7 @@ class RoomsController < ApplicationController
     end
   end
 
-  def destroy()
+  def destroy
     @room = Room.find(params[:name])
     if @room
       @room.destroy

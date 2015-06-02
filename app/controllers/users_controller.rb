@@ -28,9 +28,7 @@ class UsersController < ApplicationController
       redirect_to '/rooms/lobby'
     else
       flash[:error] = current_user.errors.first[1]
-
       @current_user = User.find(current_user.id)
-
       render 'new'
     end
   end

@@ -1,13 +1,11 @@
-
-require 'spec_helper'
 require 'rails_helper'
 
-describe RoomsController, :type => :controller do
+describe RoomsController do
   include ApplicationHelper
 
   describe "GET #join" do
 
-    describe "without current user" do
+    context "without current user" do
 
       it "should redirect to home" do
 
@@ -20,7 +18,7 @@ describe RoomsController, :type => :controller do
     end
 
     # turn on irc handler before
-    describe "with current user" do
+    context "with current user" do
       let(:user) { create :user }
       before { sign_in user }
 
@@ -40,7 +38,6 @@ describe RoomsController, :type => :controller do
       end
 
     end
-
   end
 
   describe "GET #leave" do
@@ -59,17 +56,10 @@ describe RoomsController, :type => :controller do
       expect(assigns(:room).users).not_to include(user.irc_nick.to_sym)
     end
 
-    it "assigns @redir_to_rooms" do
+    it "assigns @redir_to_rooms if the origin is from chat controls" do
       xhr :get, :leave, name: 'lobby', origin: "chatcontrols"
       expect(assigns(:redir_to_rooms)).to eq("#{root_url}rooms")
     end
-
-    it "assigns @redir_to_rooms" do
-      xhr :get, :leave, name: 'lobby', origin: ""
-      expect(assigns(:redir_to_rooms)).to be(false)
-    end
-
-
   end
 
   describe "GET #index" do
@@ -77,6 +67,22 @@ describe RoomsController, :type => :controller do
     it "renders the :index view" do
       get :index
       expect(response).to render_template(:index)
+    end
+  end
+
+  describe "GET #info" do
+    let(:user) { create :user }
+    before { sign_in(user) }
+
+    it "responds with json" do
+      xhr :get, :info, name: 'lobby'
+      json = JSON.parse(response.body)
+      expect(json['name']).to_not be_nil
+      expect(json['room_operator']).to_not be_nil
+      expect(json['users']).to_not be_nil
+      expect(json['channel']).to_not be_nil
+      expect(json['current_user']['name']).to_not be_nil
+      expect(json['current_user']['irc_nick']).to_not be_nil
     end
   end
 end
