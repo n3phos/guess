@@ -10,7 +10,7 @@ worker_processes 1
 timeout 30
 preload_app true
 
-listen '/tmp/unicorn.spui.sock', backlog: 64
+listen '/tmp/unicorn.guess.sock', backlog: 64
 
 before_fork do |server, worker|
   Signal.trap 'TERM' do
