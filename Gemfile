@@ -16,6 +16,7 @@ group :development do
   gem 'capistrano3-unicorn'
   gem 'capistrano-rails'
   gem 'capistrano-rvm'
+  #gem 'capistrano-db-tasks'
 end
 
 gem 'unicorn'

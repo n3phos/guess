@@ -19,6 +19,7 @@ var GameClient = function(chat) {
   this.game_url = null;
   this.player = null;
   this.categories = "";
+  this.score = 0;
 
   // booleans
   this.initialized = false;
@@ -108,6 +109,8 @@ GameClient.prototype.new = function(event) {
 GameClient.prototype.reload = function(opts) {
   this.set_next_record(opts.record);
   this.stage_reset = false;
+  this.score = 0;
+  $('#score-count').html("0");
   this.run();
 
   $('#game-controls').css("visibility", "hidden")
@@ -184,6 +187,16 @@ GameClient.prototype.reset = function() {
     this.categories = "";
 }
 
+GameClient.prototype.skip = function() {
+  this.chat.irc.msg("!skip");
+
+  $('#skip-btn').attr('disabled', true);
+  setTimeout(function() {
+    $('#skip-btn').attr('disabled', false);
+  }, 6000);
+
+}
+
 GameClient.prototype.load_new = function(game_id) {
   var load_next = null;
 
@@ -237,6 +250,23 @@ GameClient.prototype.set_category = function(event) {
 
 GameClient.prototype.set_game_url = function (game_id) {
   this.game_url = $(location).attr('href') + "/games/" + game_id;
+}
+
+GameClient.prototype.check_answer = function() {
+  var current_user = this.chat.user().name;
+  var resolver = this.chat.user(this.match_info.resolver);
+  if(resolver == current_user) {
+    this.increment_score();
+  }
+}
+
+GameClient.prototype.increment_score = function() {
+  this.score += 5;
+  var s = this.score.toString();
+
+  $('#score-count').html(s);
+  $('#score-increment').css({ 'top': "20px", 'opacity': 1});
+  $('#score-increment').animate({ top: "0px", opacity:0}, 1300);
 }
 
 
@@ -417,7 +447,11 @@ GameClient.prototype.before_stage = function(callback) {
   var answer = this.match_info.answer;
 
   match.html(user + answer);
-  match.fadeIn({ "duration": 2000, "complete": setTimeout(function () { game.after_stage(); }, 4000 ) });
+  match.fadeIn({ "duration": 2000, "complete": function () {
+    game.check_answer();
+    setTimeout(function () { game.after_stage(); } , 2000 );
+  }
+  });
 }
 
 GameClient.prototype.after_stage = function() {

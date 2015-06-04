@@ -1,5 +1,8 @@
+<div style="text-align: center">
 <div id="game-controls" class="controls">
-
   <%= render :partial => 'shared/new_game' %>
+</div>
+
+<%= button_to "skip", "javascript: game.skip()" ,:class => "btn btn-success", :style => "margin-top:25px;", :id => "skip-btn" %>
 
 </div>

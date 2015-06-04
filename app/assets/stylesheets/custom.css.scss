@@ -13,6 +13,11 @@
   src: font-url('diablo_h.ttf') format('truetype');
 }
 
+@font-face {
+  font-family: 'Mario';
+  src: font-url('SuperMario256.ttf') format('truetype');
+}
+
 @mixin chat-border {
   border: 1px solid rgba(0,0,0,0.2);
 }
@@ -105,6 +110,13 @@ textarea {
   font-family: 'Diablo';
 }
 
+.mario-font {
+  font-family: 'Mario';
+  text-shadow: -1px 0 black, 0 1px black, 1px 0 black, 0 -1px black;
+  font-size: xx-large;
+  color: gold;
+}
+
 .game-options {
   height: 100px;
   width: 100%;
@@ -124,7 +136,7 @@ textarea {
 }
 
 .controls {
-  margin-top: 95px;
+  margin-top: 40px;
   text-align: center;
   visibility: hidden;
 }
