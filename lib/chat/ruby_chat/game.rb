@@ -13,7 +13,7 @@ class Game
 
   attr_accessor :cli, :ready, :looping_thread, :active, :started, :game_url, :resource, :current_record, :records, :entry_index, :rec_index, :solved
   attr_accessor :channel_users
-  attr_accessor :blocked
+  attr_accessor :cmds
   attr_accessor :delayed_start
   attr_accessor :last_ready
   attr_accessor :delay_duration
@@ -36,7 +36,9 @@ class Game
     self.records = []
     self.solved = false
     self.channel_users = {}
-    self.blocked = false
+    self.cmds = { "skip" => { "blocked" => false },
+                  "guess" => { "blocked" => false },
+                  "ready" => { "blocked" => false }}
     self.delayed_start = false
     self.last_ready = nil
     self.delay_duration = 4
@@ -75,6 +77,29 @@ class Game
   def info
     puts "in game.info"
     "q=#{current_question},lastplay=#{self.last_play.to_s},last=#{!more_records?}"
+  end
+
+  def block_cmd(cmd, duration)
+    c = cmds[cmd]
+    if ! c["blocked"]
+      Thread.new do
+
+        lock_cmd(c)
+
+        sleep(duration)
+
+        unlock_cmd(c)
+
+      end
+    end
+  end
+
+  def lock_cmd(cmd)
+    cmd["blocked"] = true
+  end
+
+  def unlock_cmd(cmd)
+    cmd["blocked"] = false
   end
 
   def hint
@@ -129,24 +154,12 @@ class Game
     self.started
   end
 
-  def blocked?
-    self.blocked
+  def blocked?(cmd)
+    self.cmds[cmd]['blocked']
   end
 
-  def lock_guess
-    puts "loking guess"
-    self.blocked = true
-  end
-
-  def unlock_guess
-    puts "unlocking guess"
-    self.blocked = false
-  end
 
   def guess_theme(guess, user)
-    blocked = blocked?
-    puts "blocked res: #{blocked}"
-    if(!blocked)
       a = current_answer
 
       puts "guess: #{guess} answer: #{a}"
@@ -154,9 +167,6 @@ class Game
       if(guess.eql?(a))
         on_record_match(user)
       end
-    else
-      puts "guess was blocked"
-    end
   end
 
   def start
@@ -209,6 +219,7 @@ class Game
 
   def on_skip(source, data)
     resolve("GameServer", true)
+    block_cmd("skip", 6)
   end
 
   def active?
@@ -252,7 +263,7 @@ class Game
         loops -= 1
       end
 
-      lock_and_release_guess
+      block_cmd("guess", 5)
 
       resolve("GameServer", false)
 
@@ -381,19 +392,7 @@ class Game
       resolve(user)
     end
 
-    lock_and_release_guess
-  end
-
-  def lock_and_release_guess
-    if !blocked?
-      Thread.new do 
-        lock_guess
-
-        sleep(5)
-
-        unlock_guess
-      end
-    end
+    block_cmd("guess", 5)
   end
 
   def resolve(user, stop_loop = true)
@@ -454,8 +453,10 @@ class Game
 
     handler = "on_#{trigger}"
 
-    if self.respond_to?(handler)
+    if self.respond_to?(handler) && ! blocked?(trigger)
       self.send(handler, source, data)
+    else
+      puts "#{trigger} was blocked"
     end
 
   end
