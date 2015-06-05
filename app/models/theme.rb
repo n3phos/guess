@@ -47,8 +47,8 @@ class Theme < ActiveRecord::Base
 
     qs = questions.where(reviewed: true).limit(3)
 
-    qs_pool << { "q" => "Theme", "a" => theme_name } unless theme_name.empty?
-    qs_pool << { "q" => "Interpret", "a" => theme_interpret } unless theme_interpret.empty?
+    qs_pool << { "q" => "Theme", "a" => theme_name } unless theme_name.blank?
+    qs_pool << { "q" => "Interpret", "a" => theme_interpret } unless theme_interpret.blank?
 
     if(!qs.empty?)
       qs.each do |q|
