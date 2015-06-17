@@ -28,8 +28,15 @@
   }
 }
 
+@-moz-document url-prefix() {
+    .image-display {
+      margin-top: 135px;
+      position: relative;
+    }
+}
+
 html {
-  overflow-y: scroll;
+overflow-y: scroll;
 }
 
 body {
@@ -248,7 +255,6 @@ footer {
   height: 100px;
   text-align: center;
 }
-
 .image-display {
   margin-top: 220px;
   position: relative;

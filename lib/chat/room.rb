@@ -2,25 +2,32 @@ require 'json'
 
 class Room
 
-  attr_accessor :name, :handler, :channel, :room_operator, :users, :active_game, :cli
+  # Room class implements a resource like interface for the room
+  # controller to create and find chat rooms. It provides the methods
+  # for User Model objects to join or leave a specific room.
 
-  @@container = {}
+  attr_accessor :name, :irc_handler, :channel, :room_operator, :users, :active_game, :bot_id
+
+  @@room_list = {}
   @@room_ids = 0
 
+  # returns room instance
   def self.find(id)
-    @@container[id.to_sym]
+    @@room_list[id.to_sym]
   end
 
+  # all rooms
   def self.all
-    @@container.values
+    @@room_list.values
   end
 
 
-  def initialize(irc_handler)
+  def initialize(handler)
     self.name = ""
-    self.handler = irc_handler
+    self.irc_handler = handler
     self.users = {}
     self.active_game = nil
+    self.bot_id = nil
   end
 
   def create(name)
@@ -32,17 +39,19 @@ class Room
 
     config = { 'channel' => channel , 'nick' => room_operator}
 
-    self.cli = self.handler.clusters[:virgo].cli
-    cli.create_bot(config)
-    add(self)
+    # creates irc bot on server side and assigns bot id
+    self.bot_id = irc_handler.create_bot(config)
+
+    # append to room list
+    append(self)
   end
 
   def setup_game(game_opts)
-    cli.setup_bot_game("virgo#bot_1", game_opts)
+    irc_handler.setup_game(bot_id, game_opts)
   end
 
   def game_info()
-    cli.game_info("virgo#bot_1")
+    irc_handler.game_info(bot_id)
   end
 
 
@@ -87,12 +96,10 @@ class Room
 
   protected
 
-  def add(room)
-    puts "in add"
+  def append(room)
     id = room.name.to_sym
-    return false if @@container.keys.include?(id)
-    @@container.merge!({ id => room })
-    puts @@container
+    return false if @@room_list.keys.include?(id)
+    @@room_list.merge!({ id => room })
   end
 
   def alloc_room_id

@@ -1,5 +1,5 @@
 
-class GameAnswer
+class Hint
 
   attr_accessor :mask_char, :revealed, :store, :index_pool
   attr_accessor :sample_rate
@@ -10,7 +10,7 @@ class GameAnswer
     @mask_char = "*"
     @revealed = []
     @store = answer.scan(/./)
-    @steps = 3
+    @steps = 4
 
     @index_pool = (0..@store.length - 1).to_a
 

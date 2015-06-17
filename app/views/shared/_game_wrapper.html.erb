@@ -5,6 +5,40 @@
 
     <div class="game-box">
 
+    <div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+      <div class="modal-dialog">
+        <div class="modal-content">
+          <div class="modal-header">
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+            <h4 class="modal-title" id="myModalLabel">How it works</h4>
+          </div>
+          <div class="modal-body">
+            <p>When the game has started you hear a music playing in the background. To score points
+            you have to guess from which Movie, Game, or Series this soundtrack comes from and
+            type in the right answer into the chat.<p>
+            <%= image_tag('chat.png') %>
+            <p>After the first question has been answered the quiz progresses and shows a new question
+            related to this soundtrack and or Movie, like: 'Theme' - What is the name of the soundtrack?
+            or some other question.</p>
+            <h5>Hints</h5>
+            <p>Hints can give you a little help to find out what the correct answer is.
+            For example if you've heard this song before but your're not entirely sure
+            anymore or if you have mispronounced something, take a look at the hints.</p>
+            <%= image_tag('hint.png') %>
+
+            <h5>Skipping</h5>
+            <p>If you don't know the answer or just want the next question you can click the skip button
+            to resolve the current question and display the answer.</p>
+            <%= image_tag('skip.png') %>
+
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
       <div id="game-wrapper" >
         <div class="absolute-center loading-container" >
           <%= image_tag('loading-game.gif', :class => "load-gif") %>

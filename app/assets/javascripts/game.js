@@ -8,11 +8,55 @@ $(document).ready(function(){
       game.reload(opts);
     }
   });
+
 });
 
 function onYouTubeIframeAPIReady() {
   game.setup_player();
 }
+
+function createCookie(name, value, days) {
+    var expires;
+
+    if (days) {
+        var date = new Date();
+        date.setTime(date.getTime() + (days * 24 * 60 * 60 * 1000));
+        expires = "; expires=" + date.toGMTString();
+    } else {
+        expires = "";
+    }
+    document.cookie = encodeURIComponent(name) + "=" + encodeURIComponent(value) + expires + "; path=/";
+}
+
+function readCookie(name) {
+    var nameEQ = encodeURIComponent(name) + "=";
+    var ca = document.cookie.split(';');
+    for (var i = 0; i < ca.length; i++) {
+        var c = ca[i];
+        while (c.charAt(0) === ' ') c = c.substring(1, c.length);
+        if (c.indexOf(nameEQ) === 0) return decodeURIComponent(c.substring(nameEQ.length, c.length));
+    }
+    return null;
+}
+
+function eraseCookie(name) {
+    createCookie(name, "", -1);
+}
+
+$.fn.selectRange = function(start, end) {
+    return this.each(function() {
+        if (this.setSelectionRange) {
+            this.focus();
+            this.setSelectionRange(start, end);
+        } else if (this.createTextRange) {
+            var range = this.createTextRange();
+            range.collapse(true);
+            range.moveEnd('character', end);
+            range.moveStart('character', start);
+            range.select();
+        }
+    });
+};
 
 var GameClient = function(chat) {
   this.chat = chat;
@@ -104,6 +148,10 @@ GameClient.prototype.new = function(event) {
   if($('#btn-series').hasClass('active')) {
     $('#btn-series').button('toggle');
   }
+
+  $('#usermsg').selectRange(0);
+
+
 }
 
 GameClient.prototype.reload = function(opts) {
@@ -197,6 +245,17 @@ GameClient.prototype.skip = function() {
 
 }
 
+GameClient.prototype.first_visit = function() {
+  if(readCookie('first_visit') == "true") {
+    this.manual();
+    eraseCookie('first_visit');
+  }
+}
+
+GameClient.prototype.manual = function() {
+  $('#myModal').modal('toggle');
+}
+
 GameClient.prototype.load_new = function(game_id) {
   var load_next = null;
 
@@ -225,6 +284,8 @@ GameClient.prototype.load_and_reset = function() {
 
 GameClient.prototype.show = function(load_next) {
   load_next = typeof load_next !== 'undefined' ? load_next : false;
+
+  this.first_visit();
 
   $.ajax({
     url: this.game_url + "/show",

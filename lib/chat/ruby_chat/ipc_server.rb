@@ -13,7 +13,6 @@ module RubyChat
     include Commands
 
     def initialize(config = {})
-
       self.config = {}
       self.config.merge!(
         {
@@ -22,29 +21,22 @@ module RubyChat
         })
 
       self.bots = BotManager.new(self)
-
     end
 
     def start
-
       serv = TCPServer.new(host, port)
-
       rails_client = serv.accept
 
       puts "rails client connected: #{rails_client.inspect}"
 
       serve(rails_client)
-
     end
 
     def serve(client)
-
       rs = []
-
       rs << client
 
       loop do
-
         read = nil
         read = IO.select(rs, nil, nil, nil)
         if read
@@ -53,18 +45,14 @@ module RubyChat
           handle_request(packet)
         end
       end
-
     end
 
     def handle_request(packet)
       cmd_queue = []
-
-      action = "irc_#{packet.action}"
+      action = "cmd_#{packet.action}"
 
       if self.respond_to?(action)
-
         begin
-
           cmd_queue << Thread.new do
             self.send(action, packet)
           end
@@ -73,7 +61,6 @@ module RubyChat
           puts e.message
           puts e.backtrace.inspect
         end
-
       end
     end
 
