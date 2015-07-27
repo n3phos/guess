@@ -35,6 +35,10 @@
     }
 }
 
+.landing-page {
+  height: 600px;
+}
+
 html {
 overflow-y: scroll;
 }
@@ -249,6 +253,13 @@ footer {
   padding-top: 5px;
   border-top: 1px solid #eaeaea;
   color: #777;
+}
+
+.welcome {
+  margin: auto;
+  position: absolute;
+  top: 0; bottom: 0; right: 0; left: 0;
+  height: 150px;
 }
 
 .match {

@@ -4,18 +4,16 @@ class Hint
   attr_accessor :mask_char, :revealed, :store, :index_pool
   attr_accessor :sample_rate
   attr_accessor :steps
+  attr_accessor :unrevealed
 
   def initialize(answer)
-    #@mask_char = "\u{204E}"
     @mask_char = "*"
-    @revealed = []
     @store = answer.scan(/./)
     @steps = 4
-
-    @index_pool = (0..@store.length - 1).to_a
+    @unrevealed = []
 
     @store.each_with_index do |c, i|
-      @revealed << i if c.match(" ")
+      @unrevealed << i unless c.match(" ")
     end
 
     if(@store.length > 20)
@@ -33,21 +31,14 @@ class Hint
       return answer
     end
 
-    unrevealed = @index_pool.select do |i|
-      !@revealed.include?(i)
-    end
+    # remove x character indexes from the unrevealed array
+    @unrevealed -= @unrevealed.sample(sample_rate)
 
-    @revealed += unrevealed.sample(@sample_rate)
-
-    answer = @store.each_with_index.map do |c, i|
-      if(!@revealed.include?(i))
-        c = @mask_char
-      end
-      c
+    answer = store.each_with_index.map do |c, i|
+      @unrevealed.include?(i) ? mask_char : c
     end
 
     @steps -= 1
-
     answer.join
   end
 end
