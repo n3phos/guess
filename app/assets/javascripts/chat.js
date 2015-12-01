@@ -199,6 +199,15 @@ WebChat.prototype.msg = function(msg) {
   this.irc.msg(msg);
 
   this.append(chat.user().name + ": " + msg);
+
+
+}
+WebChat.prototype.submit_msg = function() {
+
+  var m = $('#usermsg').val();
+  this.msg(m);
+  $('#usermsg').val("");
+
 }
 
 WebChat.prototype.leave = function(ori) {
